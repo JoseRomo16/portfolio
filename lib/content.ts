@@ -47,7 +47,9 @@ export const UI = {
     themeToDark: { es: "Cambiar a tema oscuro", en: "Switch to dark theme" },
     themeToLight: { es: "Cambiar a tema claro", en: "Switch to light theme" },
   },
+  // Se muestra solo a navegadores en otro idioma, por eso va únicamente en inglés.
   langSuggest: {
+    label: "Language suggestion",
     text: "This page is also available in English.",
     cta: "Read in English",
     close: "Dismiss",

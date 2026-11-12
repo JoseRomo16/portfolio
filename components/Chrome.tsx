@@ -191,7 +191,7 @@ export function LangSuggest({ l, altHref }: { l: Lang; altHref: string }) {
     } catch {}
   };
   return (
-    <div lang="en" className="fixed inset-x-0 top-14 z-40 border-b border-hair bg-tile">
+    <div lang="en" role="region" aria-label={UI.langSuggest.label} className="fixed inset-x-0 top-14 z-40 border-b border-hair bg-tile">
       <div className={`${container} flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-2.5 text-[14px]`}>
         <p className="text-sub2">{UI.langSuggest.text}</p>
         <div className="flex items-center gap-4">

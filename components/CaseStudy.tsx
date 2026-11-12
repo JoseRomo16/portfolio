@@ -35,7 +35,8 @@ function DataTable({ t, l }: { t: Table; l: Lang }) {
           <tr className="border-b border-hair">
             {t.head.map((h, i) => (
               <th key={i} scope="col" className={`px-3 py-3.5 text-[13px] font-semibold text-sub sm:px-5 ${i > 0 ? "text-right" : ""}`}>
-                {tx(h, l)}
+                {/* Un encabezado vacío no se anuncia: los lectores de pantalla reciben "Métrica". */}
+                {tx(h, l) || <span className="sr-only">{CASE_UI.metric[l]}</span>}
               </th>
             ))}
           </tr>
