@@ -1,0 +1,10 @@
+# Texto con fin de línea LF en el repo; binarios intactos (evita corromper PDFs e imágenes en Windows).
+* text=auto eol=lf
+*.pdf binary
+*.png binary
+*.webp binary
+*.jpg binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.ico binary

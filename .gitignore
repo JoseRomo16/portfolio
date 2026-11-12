@@ -4,3 +4,14 @@ out
 next-env.d.ts
 *.tsbuildinfo
 .DS_Store
+*.zip
+.playwright-mcp
+
+# Variantes responsivas generadas en el prebuild (scripts/responsive-images.mjs)
+public/img/projects/w/
+
+# Pruebas y reportes
+playwright-report/
+test-results/
+test-results-*/
+.lighthouseci/

@@ -1,7 +1,16 @@
 # Perfil consolidado — Jose Luis Romo Melo
 
-Fuente única de verdad para la landing (v3, 2 oct 2026). Contenido cerrado.
-Fuentes: **CV** (EnglishVersion_v2_1) · **LinkedIn** (perfil guardado + lista de licencias) · **GitHub** (5 repos revisados) · **respuestas de Jose**.
+Fuente única de verdad para la landing (v4, 12 nov 2026).
+Fuentes: **CV** (Software Developer ES/EN, 12 nov 2026) · **LinkedIn** (perfil guardado + lista de licencias) · **GitHub** (5 repos revisados; READMEs, ITERATION.md, ADRs) · **respuestas de Jose**.
+
+> **Dónde vive cada dato en el código:** textos generales en `lib/content.ts`; proyectos y casos de estudio en `lib/projects.ts`. Si cambias una cifra aquí, cámbiala también allá.
+
+### Cambios de la v4 (nov 2026)
+- **AutoValor CO terminado y en producción**: modelos, API y sitio públicos (ver §4).
+- Cada proyecto tiene **caso de estudio** propio: `/proyectos/<slug>` y `/en/projects/<slug>`.
+- Versión en inglés en `/en/`, con selector de idioma y tema claro/oscuro.
+- Sección **"Ahora mismo"**: Finance Lab (construyendo), AutoValor CO (recién cerrado), Ingeniería de Software (estudiando).
+- Habilidades: LightGBM, SHAP y predicción conformal pasan de "en curso" a dominadas.
 ✅ = confirmado · ⚠️ = pendiente.
 
 ---
@@ -31,7 +40,7 @@ Cómo lo sostienen los proyectos:
 | Rol | Evidencia |
 |---|---|
 | IA (LLMs) | BNPL Support Assistant: RAG + tool use + evaluación medida |
-| Data Science / ML | AutoValor CO (pipeline + modelo en curso), K-means |
+| Data Science / ML | AutoValor CO (LightGBM + rango conformal + SHAP, en producción), K-means |
 | Data Analyst | K-means, Activos Financieros (Sharpe, VaR, drawdown), Power BI/Excel, UDENAR |
 | Software Developer | Notes App full-stack desplegada, trainee React en GSE |
 
@@ -44,7 +53,9 @@ Cómo lo sostienen los proyectos:
 - Diseñó diagramas BPMN, de clases, de componentes y de despliegue como referencia de arquitectura para todo el equipo.
 - Mantuvo manuales de usuario, catálogos de servicios y acuerdos de interfaz en SharePoint y ReadTheDocs, con trazabilidad en todo el ciclo de vida.
 - Stack: Azure DevOps · SharePoint · ReadTheDocs · BPMN · UML · Scrum · Postman
-- 🔒 **Ministerio del Interior: confidencial.** No se menciona el cliente ni el contrato. Tampoco Airflow/Spark/KServe/Wazuh/Kubernetes de ese proyecto, ni la API biométrica. *(Hay que quitarlos de la landing actual.)*
+- Logros agregados en nov 2026 (también en el CV): automatización de documentos técnicos con Python (python-docx) y documentación de despliegues de datos y ML sobre Kubernetes.
+- 🔒 **Ministerio del Interior: confidencial.** No se menciona el cliente, el contrato ni la API biométrica.
+- ✅ **Tecnologías (nov 2026, confirmado por Jose):** sí se puede decir que documentó el despliegue y la configuración de Kubernetes, Airflow, Spark, KServe y Wazuh. Se presentan como conocimiento de despliegue y configuración, sin atarlas al cliente.
 
 **Trainee Software Developer — Frontend & QA** (aprendiz SENA, contrato de formación) · Mar 2025 – Sep 2025 ✅
 - Gestionó bases de datos SQL: consultas de validación, integridad de datos y reportes para el equipo.
@@ -55,7 +66,7 @@ Cómo lo sostienen los proyectos:
 
 ### Universidad de Nariño — Facultad de Ciencias Económicas y Administrativas
 **Project Analyst — Data Management & Educational Projects** · Pasto, presencial, contrato temporal
-- Fechas: **may 2024 – oct 2025** ✅ (confirmado). El CV todavía dice oct 2024 y hay que actualizarlo. Este cargo se cruza con GSE entre mar y oct 2025.
+- Fechas: **may 2024 – oct 2025** ✅ (confirmado). El CV ya está corregido. Este cargo se cruza con GSE entre mar y oct 2025.
 - Construyó y mantuvo bases de datos de estudiantes, docentes y cuentas de cobro, mejorando la precisión de la información para decisiones administrativas.
 - Aplicó análisis cuantitativo a la gestión administrativa de la facultad.
 - Documentó proyectos educativos cumpliendo requisitos institucionales y plazos.
@@ -78,13 +89,28 @@ Asistente de soporte con LLM que responde preguntas de compradores sobre políti
 - Stack: Python · FastAPI · BM25 · OpenAI-compatible API · pytest
 - Nota: es el proyecto que mejor demuestra el perfil IA (evaluación de LLMs, honestidad sobre resultados).
 
-### 2. AutoValor CO — Data Engineering + ML ✅
-`github.com/JoseRomo16/AutoValorCo` · en desarrollo
-Valoración de carros y motos usados en Colombia con intervalo de predicción P10–P90.
-- **Hecho:** pipeline medallion bronze → silver → gold (Parquet, DuckDB, dbt), validación con Pandera, **7.207 carros y 3.765 motos limpios**, captura semanal automática en GitHub Actions, scraping ético (robots.txt, Ley 1581 de 2012), tests (cobertura ≥ 70 %), CI, ruff + mypy, ADRs.
-- **Siguiente:** modelación (hedónico OLS como línea base vs. LightGBM/CatBoost, meta MAPE ≤ 15 %), SHAP, curvas de depreciación, comparación con Fasecolda, API FastAPI y app Next.js.
-- Stack: Python · Playwright · DuckDB · dbt · Pandera · GitHub Actions · Docker · (en curso: LightGBM, CatBoost, SHAP, MLflow, FastAPI, Next.js)
-- En la landing se enlaza al repo sin mencionar ajustes pendientes.
+### 2. AutoValor CO — Data Science + ML + Producto ✅
+`github.com/JoseRomo16/AutoValorCo` · 2026 · **completo y en producción**
+Cuánto vale un carro o una moto usada en Colombia, con su rango probable P10–P90 y los factores que mueven el precio.
+- **Demo:** https://autovalor-web.onrender.com · **API:** https://autovalor-api.onrender.com/docs (plan gratuito: la primera valoración tarda ~1 min).
+- **Datos:** scrapers de TuCarro con robots.txt, pausas y sin datos de vendedores (Ley 1581 de 2012). Lago medallion: bronze Parquet en una rama del repo, silver/gold con dbt sobre DuckDB, contratos Pandera. **12.948 anuncios** (8.443 carros, 4.505 motos), corte fijo de 4 capturas (30 sep – 19 oct 2026).
+- **Modelo:** LightGBM vs. línea base hedónica OLS sobre log(precio), K-fold agrupado por vehículo, calibración conformal del rango, SHAP por vehículo. Modelo servido: versión 2026-11-02.
+- **Resultados (fuera de muestra):**
+
+  | | Carros | Motos |
+  |---|---|---|
+  | MAPE | **10,0 %** (meta ≤ 15 %) | 20,4 % |
+  | MAPE partición temporal | 11,4 % | 21,9 % |
+  | Línea base OLS | 12,9 % | 33,2 % |
+  | Cobertura P10–P90 (objetivo 80 %) | 80,2 % | 80,5 % |
+  | Ancho medio del rango | 39 % | 70 % |
+  | Etiqueta ganga / justo / caro | publicada | retenida por el ancho |
+
+- **Hallazgos:** depreciación anual de 5,1 % (VW) a 9,5 % (Ford) en carros y de 0,9 % (Yamaha) a 6,4 % (Bajaj) en motos; cada 10.000 km restan $231.000 al carro mediano; el mismo carro se pide 7,6 % más caro en Santander que en Bogotá.
+- **Producto:** FastAPI en Docker (/predict, /explain, /catalog) y sitio Next.js estático, bilingüe y PWA. Más de 600 pruebas (cobertura ≥ 70 %), E2E con Playwright, auditoría de contraste en CI. 7 ADRs.
+- **Cierre:** TuCarro empezó a pedir verificación de cuenta; la captura se detuvo en vez de evadir el bloqueo (ADR 0005). La API oficial de Mercado Libre no entrega vehículos.
+- **Límites declarados:** son precios pedidos, no de cierre; el corte es fijo.
+- Stack: Python · dbt · DuckDB · Pandera · LightGBM · SHAP · FastAPI · Docker · Next.js · GitHub Actions
 
 ### 3. Notes App — Full-stack desplegada ✅
 `github.com/JoseRomo16/ensolvers-deploy` · sep 2026
@@ -121,7 +147,7 @@ Análisis cuantitativo de un portafolio diversificado: descarga precios históri
 ## 5. Habilidades
 
 - **IA / LLMs:** RAG, tool calling, evaluación de LLMs, prompt engineering, APIs compatibles con OpenAI · *aprendiendo:* agentes, AWS, MLOps
-- **Data Science / ML:** scikit-learn, K-means, regresión · *en curso:* statsmodels, LightGBM, CatBoost, SHAP, MLflow
+- **Data Science / ML:** scikit-learn, LightGBM, SHAP, regresión, predicción conformal, K-means
 - **Ingeniería de datos:** SQL, dbt, DuckDB, Parquet, Pandera, Playwright, scraping, GitHub Actions
 - **Análisis y BI:** Power BI, Excel avanzado, pandas, Stata, R
 - **Desarrollo:** Python, TypeScript, JavaScript, React, Next.js, NestJS, Node.js, FastAPI, Java, C#
@@ -158,7 +184,7 @@ Análisis cuantitativo de un portafolio diversificado: descarga precios históri
 ## 8. Idiomas ✅
 
 - Español: nativo
-- Inglés: **C1 Advanced, EF SET 63/100 (ago 2026)**, con enlace verificable. *(El CV todavía dice B2: actualizarlo.)*
+- Inglés: **C1 Advanced, EF SET 63/100 (ago 2026)**, con enlace verificable. *(CV actualizado.)*
 
 ## 9. Prueba social
 
@@ -166,21 +192,19 @@ Análisis cuantitativo de un portafolio diversificado: descarga precios históri
 - BNPL Assistant: mejora medida de 5/15 a 12/15 casos.
 - Notes App: demo en vivo funcionando.
 
-## 10. Cambios de contenido que aplicará la landing (no de diseño)
+## 10. Ahora mismo (sección de la landing, actualizar cada 1–2 meses)
 
-1. Posicionamiento: IA / Data Science al frente; Data Analyst + Software Developer como segundo nivel.
-2. Quitar toda mención del Ministerio del Interior y de las tecnologías de ese proyecto.
-3. Corregir fechas: Trainee hasta **Sep 2025**; UDENAR hasta **Oct 2025** (pendiente confirmar).
-4. Inglés **C1 (EF SET)** con enlace.
-5. Proyectos (5): BNPL Assistant, AutoValor CO (con su estado real), Notes App con demo, K-means y Activos Financieros. Sin scraper.
-6. Certificaciones: las 9 de LinkedIn, sin IDs del SENA y sin Scrum SFC.
-7. Agregar WhatsApp y la foto.
+| Estado | Qué | Detalle |
+|---|---|---|
+| Construyendo | Finance Lab | Replicar factores y anomalías de papers de finanzas cuantitativas, con backtesting. Empieza por los fundamentos en notebooks. |
+| Acabo de cerrar | AutoValor CO | En producción: 10,0 % de error en carros y un rango que cumple lo que promete. |
+| Estudiando | Ingeniería de Software | Politécnico Grancolombiano. En paralelo: agentes con LLMs, su evaluación y TypeScript de punta a punta. |
 
-## 11. Estado: contenido cerrado ✅
+## 11. Pendientes fuera de la landing
 
-Acciones en tus repos y documentos (fuera de la landing; conviene hacerlas antes de publicarla):
-1. **financial-asset-analysis:** cambiar la rama por defecto a `master`. Es lo más urgente, porque hoy el enlace muestra un repo vacío.
-2. **AutoValorCo:** corregir el enlace `joseluis/autovalor-co` del README.
-3. **CV:** UDENAR hasta oct 2025, inglés C1, quitar Scrum SFC y quitar Streamlit del proyecto financiero. Agregar BNPL Assistant y Notes App.
-4. **LinkedIn:** quitar "Scrum Fundamentals (CM-SFC)" del "Acerca de" y agregar los proyectos.
-5. (Opcional, alto impacto) Una o dos cifras de impacto por cargo.
+1. ✅ **CV (12 nov 2026):** `public/cv/Jose_Romo_Software_Developer_CV_ES.pdf` y `_EN.pdf`, uno por idioma del sitio. Fechas, cifras de AutoValor, BNPL y URL del portafolio ya coinciden con la landing. Posicionamiento del CV: Junior Software Developer (decisión de Jose); la landing abre con IA y Data Science.
+2. **financial-asset-analysis:** cambiar la rama por defecto a `master` (si no se ha hecho).
+3. **LinkedIn:** quitar "Scrum Fundamentals (CM-SFC)" del "Acerca de" y agregar los proyectos.
+4. **Dominio:** el sitio asume `https://joseromo.vercel.app` (`SITE_URL` en `lib/i18n.ts`). Si el dominio final es otro, cambiarlo ahí.
+5. **Foto:** 433 px de ancho. Un retrato de ≥ 800 px de ancho se vería nítido en pantallas retina.
+6. (Opcional, alto impacto) Una o dos cifras de impacto por cargo.

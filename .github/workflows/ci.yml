@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Una corrida nueva en la misma rama cancela la anterior.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: Tipos, lint, build, E2E, axe y Lighthouse
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Revisión de tipos
+        run: npm run typecheck
+
+      - name: ESLint
+        run: npm run lint
+
+      # Sin NEXT_PUBLIC_UMAMI_WEBSITE_ID: el build de CI no carga analítica.
+      - name: Build (export estático en out/)
+        run: npm run build
+
+      - name: Cache de navegadores de Playwright
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Instalar Chromium para Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E y accesibilidad (Playwright + axe)
+        run: npm run test:e2e
+
+      - name: Lighthouse CI
+        run: npm run lhci
+
+      - name: Subir reportes
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: reportes
+          path: |
+            playwright-report/
+            .lighthouseci/
+          retention-days: 14
