@@ -46,6 +46,10 @@ export const UI = {
     langShort: { es: "EN", en: "ES" },
     themeToDark: { es: "Cambiar a tema oscuro", en: "Switch to dark theme" },
     themeToLight: { es: "Cambiar a tema claro", en: "Switch to light theme" },
+    // Etiquetas cortas para los botones del menú móvil.
+    langName: { es: "English", en: "Español" },
+    themeDark: { es: "Tema oscuro", en: "Dark theme" },
+    themeLight: { es: "Tema claro", en: "Light theme" },
   },
   // Se muestra solo a navegadores en otro idioma, por eso va únicamente en inglés.
   langSuggest: {
