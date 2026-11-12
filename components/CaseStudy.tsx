@@ -34,7 +34,8 @@ const Prose = ({ items, l }: { items: { es: string; en: string }[]; l: Lang }) =
 
 function DataTable({ t, l }: { t: Table; l: Lang }) {
   return (
-    <div className="overflow-x-auto rounded-2xl bg-tile ring-1 ring-hair">
+    // En móvil la tabla puede desplazarse en horizontal: el contenedor recibe foco para hacerlo con el teclado.
+    <div tabIndex={0} role="region" aria-label={CASE_UI.table[l]} className="overflow-x-auto rounded-2xl bg-tile ring-1 ring-hair">
       <table className={`w-full border-collapse text-left text-[14px] sm:text-[15px] ${t.head.length > 3 ? "min-w-[32rem]" : ""}`}>
         <thead>
           <tr className="border-b border-hair">

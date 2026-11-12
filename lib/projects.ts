@@ -864,6 +864,7 @@ export const CASE_UI = {
   },
   nextProject: { es: "Siguiente proyecto", en: "Next project" },
   metric: { es: "Métrica", en: "Metric" },
+  table: { es: "Tabla de resultados (desplazable)", en: "Results table (scrollable)" },
   toc: { es: "En esta página", en: "On this page" },
   /** Visor de imágenes de los casos de estudio. "{i}" y "{n}" se reemplazan por la posición. */
   lightbox: {

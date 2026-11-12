@@ -9,3 +9,9 @@ next-env.d.ts
 
 # Variantes responsivas generadas en el prebuild (scripts/responsive-images.mjs)
 public/img/projects/w/
+
+# Pruebas y reportes
+playwright-report/
+test-results/
+test-results-*/
+.lighthouseci/
