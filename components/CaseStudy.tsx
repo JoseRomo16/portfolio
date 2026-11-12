@@ -5,6 +5,7 @@ import { CASE_UI, PROJECTS, type Project, type Table } from "@/lib/projects";
 import { LangSuggest, SiteHeader } from "./Chrome";
 import { Contact, Footer, SkipLink, TextLink } from "./Home";
 import { ArrowUpRight, ChevronLeft, ChevronRight, GitHub } from "./Icons";
+import { umamiEvent } from "@/lib/analytics";
 import { CaseToc } from "./CaseToc";
 import { VisualBlock } from "./Visuals";
 
@@ -100,12 +101,13 @@ export function CaseStudyPage({ p, l }: { p: Project; l: Lang }) {
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
               {p.links.demo && (
-                <a href={p.links.demo} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-ink px-6 py-3 text-[15px] font-medium text-page transition-opacity hover:opacity-80">
+                <a href={p.links.demo} target="_blank" rel="noreferrer" {...umamiEvent("demo-open", { page: "case-study", project: p.slug })} className="inline-flex items-center gap-1.5 rounded-full bg-ink px-6 py-3 text-[15px] font-medium text-page transition-opacity hover:opacity-80">
                   {U.demo[l]} <ArrowUpRight />
                 </a>
               )}
               <a
                 href={p.links.repo}
+                {...umamiEvent("repo-open", { page: "case-study", project: p.slug })}
                 target="_blank"
                 rel="noreferrer"
                 className={`inline-flex items-center gap-2 rounded-full px-6 py-3 text-[15px] font-medium transition-colors ${p.links.demo ? "bg-soft text-ink hover:bg-soft-hover" : "bg-ink text-page hover:opacity-80"}`}
@@ -264,9 +266,9 @@ export function CaseStudyPage({ p, l }: { p: Project; l: Lang }) {
             </nav>
           </div>
         </article>
-        <Contact l={l} title={U.talk[l]} body={U.talkBody[l]} />
+        <Contact l={l} title={U.talk[l]} body={U.talkBody[l]} page="case-study" />
       </main>
-      <Footer l={l} />
+      <Footer l={l} page="case-study" />
     </>
   );
 }

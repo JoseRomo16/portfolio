@@ -9,6 +9,7 @@ import Link from "next/link";
 import { UI } from "@/lib/content";
 import { homePath, sectionPath, type Lang } from "@/lib/i18n";
 import { container } from "@/lib/ui";
+import { type UmamiProps, track } from "@/lib/analytics";
 import { ChevronRight, Moon, Sun } from "./Icons";
 
 
@@ -251,7 +252,7 @@ export function LangSuggest({ l, altHref }: { l: Lang; altHref: string }) {
   );
 }
 
-export function CopyEmail({ email, label, done }: { email: string; label: string; done: string }) {
+export function CopyEmail({ email, label, done, track: trackAttrs }: { email: string; label: string; done: string; track?: Record<string, string> }) {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
     try {
@@ -264,12 +265,24 @@ export function CopyEmail({ email, label, done }: { email: string; label: string
   };
   return (
     <>
-      <button type="button" onClick={copy} className="text-white/60 underline-offset-4 hover:text-white hover:underline">
+      <button type="button" onClick={copy} {...trackAttrs} className="text-white/60 underline-offset-4 hover:text-white hover:underline">
         {copied ? done : label}
       </button>
       <span className="sr-only" aria-live="polite">
         {copied ? done : ""}
       </span>
     </>
+  );
+}
+
+/**
+ * Enlace de descarga del CV que registra "cv-download" con track(). No usa data-umami-event
+ * porque Umami cancelaría el clic y navegaría al PDF, anulando el atributo download.
+ */
+export function CvLink({ href, page, className, children }: { href: string; page: UmamiProps["page"]; className?: string; children: React.ReactNode }) {
+  return (
+    <a href={href} download onClick={() => track("cv-download", { page })} className={className}>
+      {children}
+    </a>
   );
 }

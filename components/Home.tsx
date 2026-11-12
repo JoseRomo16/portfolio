@@ -3,7 +3,8 @@ import { CERTS, DEGREES, EXPERIENCE, HERO, LINKS, NOW, SECTIONS, SKILLS, STATS, 
 import { container } from "@/lib/ui";
 import { type Lang, homePath, projectPath, tx } from "@/lib/i18n";
 import { CASE_UI, EXTRA_PROJECTS, PROJECTS, getProject } from "@/lib/projects";
-import { CopyEmail, LangSuggest, SiteHeader } from "./Chrome";
+import { CopyEmail, CvLink, LangSuggest, SiteHeader } from "./Chrome";
+import { type UmamiProps, umamiEvent } from "@/lib/analytics";
 import { ArrowUpRight, ChevronRight, Download, GitHub, LinkedIn, Mail, WhatsApp } from "./Icons";
 import { BnplMini, Img } from "./Visuals";
 import { SIZES } from "@/lib/images";
@@ -37,10 +38,10 @@ export function Chips({ items, l }: { items: (string | { es: string; en: string 
   );
 }
 
-export function TextLink({ href, children, external = true }: { href: string; children: React.ReactNode; external?: boolean }) {
+export function TextLink({ href, children, external = true, track }: { href: string; children: React.ReactNode; external?: boolean; track?: Record<string, string> }) {
   const cls = "relative z-10 inline-flex items-center gap-1 text-[15px] font-medium text-link hover:underline hover:underline-offset-4";
   return external ? (
-    <a href={href} target="_blank" rel="noreferrer" className={cls}>
+    <a href={href} target="_blank" rel="noreferrer" className={cls} {...track}>
       {children}
       <ArrowUpRight />
     </a>
@@ -65,14 +66,21 @@ function CardTitle({ href, children, size = "md" }: { href: string; children: Re
   );
 }
 
-function CardLinks({ l, repo, demo }: { l: Lang; slug?: string; repo: string; demo?: string }) {
+function CardLinks({ l, slug, repo, demo }: { l: Lang; slug: string; repo: string; demo?: string }) {
+  const ctx = { page: "home", project: slug } as const;
   return (
     <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
       <span className="inline-flex items-center gap-1 text-[15px] font-semibold text-ink">
         {CASE_UI.caseStudy[l]} <ChevronRight c="size-3.5" />
       </span>
-      {demo && <TextLink href={demo}>{CASE_UI.demo[l]}</TextLink>}
-      <TextLink href={repo}>{CASE_UI.code[l]}</TextLink>
+      {demo && (
+        <TextLink href={demo} track={umamiEvent("demo-open", ctx)}>
+          {CASE_UI.demo[l]}
+        </TextLink>
+      )}
+      <TextLink href={repo} track={umamiEvent("repo-open", ctx)}>
+        {CASE_UI.code[l]}
+      </TextLink>
     </div>
   );
 }
@@ -106,9 +114,9 @@ function Hero({ l }: { l: Lang }) {
             <a href="#projects" className="rounded-full bg-soft px-6 py-3 text-[15px] font-medium text-ink transition-colors hover:bg-soft-hover">
               {HERO.projects[l]}
             </a>
-            <a href={LINKS.cv[l]} download className="inline-flex items-center gap-1.5 rounded-full px-4 py-3 text-[15px] font-medium text-link hover:underline hover:underline-offset-4">
+            <CvLink href={LINKS.cv[l]} page="home" className="inline-flex items-center gap-1.5 rounded-full px-4 py-3 text-[15px] font-medium text-link hover:underline hover:underline-offset-4">
               <Download /> {HERO.cv[l]}
-            </a>
+            </CvLink>
           </div>
         </div>
         <figure className="lg:col-span-5">
@@ -316,8 +324,14 @@ function Projects({ l }: { l: Lang }) {
               <div className="mt-auto flex flex-col gap-5 pt-6">
                 <Chips items={m.stack} l={l} />
                 <div className="flex flex-wrap gap-x-5 gap-y-2">
-                  {m.demo && <TextLink href={m.demo}>{CASE_UI.demo[l]}</TextLink>}
-                  <TextLink href={m.repo}>{CASE_UI.code[l]}</TextLink>
+                  {m.demo && (
+                    <TextLink href={m.demo} track={umamiEvent("demo-open", { page: "home", project: tx(m.name, "en") })}>
+                      {CASE_UI.demo[l]}
+                    </TextLink>
+                  )}
+                  <TextLink href={m.repo} track={umamiEvent("repo-open", { page: "home", project: tx(m.name, "en") })}>
+                    {CASE_UI.code[l]}
+                  </TextLink>
                 </div>
               </div>
             </article>
@@ -443,7 +457,7 @@ function Education({ l }: { l: Lang }) {
   );
 }
 
-export function Contact({ l, headingLevel = "h2", title, body }: { l: Lang; headingLevel?: "h2" | "h3"; title?: string; body?: string }) {
+export function Contact({ l, headingLevel = "h2", title, body, page = "home" }: { l: Lang; headingLevel?: "h2" | "h3"; title?: string; body?: string; page?: UmamiProps["page"] }) {
   const K = SECTIONS.contact;
   const H = headingLevel;
   const btn = "inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-[15px] font-medium transition-colors";
@@ -458,26 +472,26 @@ export function Contact({ l, headingLevel = "h2", title, body }: { l: Lang; head
           <a href={`mailto:${LINKS.email}`} className={`${btn} bg-white text-black hover:bg-white/85`}>
             <Mail /> {K.email[l]}
           </a>
-          <a href={LINKS.linkedin} target="_blank" rel="noreferrer" className={`${btn} bg-white/10 text-white hover:bg-white/20`}>
+          <a href={LINKS.linkedin} target="_blank" rel="noreferrer" className={`${btn} bg-white/10 text-white hover:bg-white/20`} {...umamiEvent("linkedin-open", { page })}>
             <LinkedIn /> LinkedIn
           </a>
           <a href={LINKS.github} target="_blank" rel="noreferrer" className={`${btn} bg-white/10 text-white hover:bg-white/20`}>
             <GitHub /> GitHub
           </a>
-          <a href={LINKS.whatsapp} target="_blank" rel="noreferrer" className={`${btn} bg-white/10 text-white hover:bg-white/20`}>
+          <a href={LINKS.whatsapp} target="_blank" rel="noreferrer" className={`${btn} bg-white/10 text-white hover:bg-white/20`} {...umamiEvent("whatsapp-open", { page })}>
             <WhatsApp /> WhatsApp
           </a>
         </div>
         <div className="mt-14 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-white/15 pt-8 text-[15px]">
           <span className="break-all font-medium">{LINKS.email}</span>
-          <CopyEmail email={LINKS.email} label={K.copy[l]} done={K.copied[l]} />
+          <CopyEmail email={LINKS.email} label={K.copy[l]} done={K.copied[l]} track={umamiEvent("email-copy", { page })} />
         </div>
       </div>
     </section>
   );
 }
 
-export function Footer({ l }: { l: Lang }) {
+export function Footer({ l, page = "home" }: { l: Lang; page?: UmamiProps["page"] }) {
   const link = "transition-colors hover:text-ink";
   return (
     <footer className={`${container} flex flex-col gap-4 py-8 text-[13px] text-sub sm:flex-row sm:items-center sm:justify-between`}>
@@ -487,9 +501,9 @@ export function Footer({ l }: { l: Lang }) {
       </div>
       <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
         <li><a href={`mailto:${LINKS.email}`} className={link}>{SECTIONS.contact.email[l]}</a></li>
-        <li><a href={LINKS.linkedin} target="_blank" rel="noreferrer" className={link}>LinkedIn</a></li>
+        <li><a href={LINKS.linkedin} target="_blank" rel="noreferrer" className={link} {...umamiEvent("linkedin-open", { page })}>LinkedIn</a></li>
         <li><a href={LINKS.github} target="_blank" rel="noreferrer" className={link}>GitHub</a></li>
-        <li><a href={LINKS.cv[l]} download className={link}>CV (PDF)</a></li>
+        <li><CvLink href={LINKS.cv[l]} page={page} className={link}>CV (PDF)</CvLink></li>
         <li><a href="#top" className={`${link} font-medium text-sub2`}>{UI.nav.top[l]} ↑</a></li>
       </ul>
     </footer>

@@ -2,7 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/Chrome";
-import { FontPreload } from "@/components/RootHtml";
+import { FontPreload, UmamiScript } from "@/components/RootHtml";
 import { Footer } from "@/components/Home";
 import { ChevronRight } from "@/components/Icons";
 import { NotFoundLangToggle } from "@/components/NotFound";
@@ -67,7 +67,7 @@ function View({ l }: { l: Lang }) {
           </ul>
         </section>
       </main>
-      <Footer l={l} />
+      <Footer l={l} page="404" />
     </>
   );
 }
@@ -78,6 +78,7 @@ export default function GlobalNotFound() {
       <head>
         <script dangerouslySetInnerHTML={{ __html: HEAD_SCRIPT }} />
         <FontPreload />
+        <UmamiScript />
       </head>
       <body id="top" className="font-sans">
         <header className="fixed inset-x-0 top-0 z-50 border-b border-hair bg-page/80 backdrop-blur-xl backdrop-saturate-150">
