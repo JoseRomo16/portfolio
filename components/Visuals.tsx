@@ -5,36 +5,61 @@
 import type { Lang, T } from "@/lib/i18n";
 import { num, tx } from "@/lib/i18n";
 import type { Visual } from "@/lib/projects";
+import { SIZES, srcSet } from "@/lib/images";
 import { ChevronRight } from "./Icons";
 
 /* ───────────── Marcos ───────────── */
 
-function Figure({ caption, l, children, wide = false }: { caption: T; l: Lang; children: React.ReactNode; wide?: boolean }) {
+function Figure({ caption, l, children }: { caption: T; l: Lang; children: React.ReactNode }) {
   return (
-    <figure className={wide ? "" : ""}>
+    <figure>
       {children}
       <figcaption className="mt-3 text-[14px] leading-snug text-sub">{caption[l]}</figcaption>
     </figure>
   );
 }
 
-function ThemedShot({ light, dark, alt, w, h, priority }: { light: string; dark: string; alt: string; w: number; h: number; priority?: boolean }) {
+type ImgProps = { src: string; alt: string; w: number; h: number; sizes: string; className: string; eager?: boolean };
+
+/** <img> con srcset de las variantes generadas en el prebuild; width/height evitan saltos de layout. */
+export function Img({ src, alt, w, h, sizes, className, eager = false }: ImgProps) {
+  const set = srcSet(src, w);
+  return (
+    <img
+      src={src}
+      srcSet={set}
+      sizes={set ? sizes : undefined}
+      alt={alt}
+      width={w}
+      height={h}
+      className={className}
+      loading={eager ? "eager" : "lazy"}
+      decoding="async"
+    />
+  );
+}
+
+function ThemedShot({ light, dark, alt, w, h, sizes, priority }: { light: string; dark: string; alt: string; w: number; h: number; sizes: string; priority?: boolean }) {
   const cls = "block h-auto w-full";
+  // La versión oscura siempre es lazy: oculta con display:none no se descarga hasta que se usa.
   return (
     <div className="overflow-hidden rounded-2xl bg-tile ring-1 ring-hair">
-      <img src={light} alt={alt} width={w} height={h} className={`only-light ${cls}`} loading={priority ? "eager" : "lazy"} />
-      <img src={dark} alt={alt} width={w} height={h} className={`only-dark ${cls}`} loading="lazy" />
+      <Img src={light} alt={alt} w={w} h={h} sizes={sizes} className={`only-light ${cls}`} eager={priority} />
+      <Img src={dark} alt={alt} w={w} h={h} sizes={sizes} className={`only-dark ${cls}`} />
     </div>
   );
 }
 
 export function VisualBlock({ v, l, priority = false }: { v: Visual; l: Lang; priority?: boolean }) {
+  // El visual principal ocupa todo el contenedor; los demás van en la columna de contenido.
+  const single = priority ? SIZES.full : SIZES.column;
   if (v.kind === "shots") {
+    const sizes = v.items.length > 1 ? SIZES.half : single;
     return (
       <div className={`grid gap-8 ${v.items.length > 1 ? "lg:grid-cols-2" : ""}`}>
         {v.items.map((it) => (
           <Figure key={it.light} caption={it.caption} l={l}>
-            <ThemedShot light={it.light} dark={it.dark} alt={it.alt[l]} w={it.w} h={it.h} priority={priority} />
+            <ThemedShot light={it.light} dark={it.dark} alt={it.alt[l]} w={it.w} h={it.h} sizes={sizes} priority={priority} />
           </Figure>
         ))}
       </div>
@@ -45,7 +70,15 @@ export function VisualBlock({ v, l, priority = false }: { v: Visual; l: Lang; pr
     return (
       <Figure caption={v.caption} l={l}>
         <div className={`overflow-hidden rounded-2xl bg-white p-3 ring-1 ring-hair sm:p-5 ${v.narrow ? "max-w-[600px]" : ""}`}>
-          <img src={v.src} alt={v.alt[l]} width={v.w} height={v.h} className="mx-auto block h-auto w-full max-w-[900px]" loading={priority ? "eager" : "lazy"} />
+          <Img
+            src={v.src}
+            alt={v.alt[l]}
+            w={v.w}
+            h={v.h}
+            sizes={v.narrow ? "(min-width: 640px) 560px, calc(100vw - 56px)" : single}
+            className="mx-auto block h-auto w-full max-w-[900px]"
+            eager={priority}
+          />
         </div>
       </Figure>
     );
@@ -57,7 +90,7 @@ export function VisualBlock({ v, l, priority = false }: { v: Visual; l: Lang; pr
           <div key={it.src} className={v.items.length % 2 === 1 && i === v.items.length - 1 ? "md:col-span-2 md:mx-auto md:w-1/2" : ""}>
             <Figure caption={it.caption} l={l}>
               <div className="overflow-hidden rounded-2xl bg-white p-3 ring-1 ring-hair">
-                <img src={it.src} alt={it.alt[l]} width={it.w} height={it.h} className="block h-auto w-full" loading="lazy" />
+                <Img src={it.src} alt={it.alt[l]} w={it.w} h={it.h} sizes={SIZES.half} className="block h-auto w-full" />
               </div>
             </Figure>
           </div>

@@ -6,3 +6,6 @@ next-env.d.ts
 .DS_Store
 *.zip
 .playwright-mcp
+
+# Variantes responsivas generadas en el prebuild (scripts/responsive-images.mjs)
+public/img/projects/w/

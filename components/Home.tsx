@@ -5,7 +5,8 @@ import { type Lang, homePath, projectPath, tx } from "@/lib/i18n";
 import { CASE_UI, EXTRA_PROJECTS, PROJECTS, getProject } from "@/lib/projects";
 import { CopyEmail, LangSuggest, SiteHeader } from "./Chrome";
 import { ArrowUpRight, ChevronRight, Download, GitHub, LinkedIn, Mail, WhatsApp } from "./Icons";
-import { BnplMini } from "./Visuals";
+import { BnplMini, Img } from "./Visuals";
+import { SIZES } from "@/lib/images";
 
 export const tile =
   "rounded-3xl bg-tile ring-1 ring-hair transition-[transform,box-shadow] duration-300 ease-out motion-safe:hover:scale-[1.01] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]";
@@ -218,8 +219,8 @@ function Projects({ l }: { l: Lang }) {
               ))}
             </dl>
             <div className="overflow-hidden rounded-xl ring-1 ring-hair">
-              <img src="/img/projects/autovalor-valorar-claro.webp" alt="" width={1440} height={900} loading="lazy" className="only-light block w-full" />
-              <img src="/img/projects/autovalor-valorar-oscuro.webp" alt="" width={1440} height={900} loading="lazy" className="only-dark block w-full" />
+              <Img src="/img/projects/autovalor-valorar-claro.webp" alt="" w={1440} h={900} sizes={SIZES.cardWide} className="only-light block h-auto w-full" />
+              <Img src="/img/projects/autovalor-valorar-oscuro.webp" alt="" w={1440} h={900} sizes={SIZES.cardWide} className="only-dark block h-auto w-full" />
             </div>
             <div className="mt-auto flex flex-col gap-5">
               <Chips items={av.stack.slice(0, 7)} l={l} />
@@ -265,8 +266,8 @@ function Projects({ l }: { l: Lang }) {
             <CardTitle href={projectPath(l, notes.slug)}>{tx(notes.name, l)}</CardTitle>
             <p className="mt-3 text-[15px] leading-relaxed text-sub">{notes.lede[l]}</p>
             <div className="mt-6 overflow-hidden rounded-xl ring-1 ring-hair">
-              <img src="/img/projects/notes-claro.webp" alt="" width={1920} height={1200} loading="lazy" className="only-light block w-full" />
-              <img src="/img/projects/notes-oscuro.webp" alt="" width={1920} height={1200} loading="lazy" className="only-dark block w-full" />
+              <Img src="/img/projects/notes-claro.webp" alt="" w={1920} h={1200} sizes={SIZES.cardThird} className="only-light block h-auto w-full" />
+              <Img src="/img/projects/notes-oscuro.webp" alt="" w={1920} h={1200} sizes={SIZES.cardThird} className="only-dark block h-auto w-full" />
             </div>
             <div className="mt-auto flex flex-col gap-5 pt-6">
               <Chips items={["NestJS", "PostgreSQL", "Next.js", "Docker"]} l={l} />
