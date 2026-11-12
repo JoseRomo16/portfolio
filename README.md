@@ -1,10 +1,18 @@
 # Jose Luis Romo Melo — Portfolio
 
-Landing personal bilingüe (ES/EN) en **Next.js 15 · React 19 · TypeScript · Tailwind CSS v4**.
-Toda la página vive en un solo archivo: `app/page.tsx`. Exporta HTML estático y despliega en Vercel sin configuración.
+Sitio personal bilingüe en **Next.js 15 · React 19 · TypeScript · Tailwind CSS v4**, exportado como HTML estático y desplegado en Vercel.
 
-- **Modo oscuro:** automático, sigue la preferencia del sistema operativo o del teléfono.
-- **Responsiva:** teléfono (desde 320 px), tablet (768 y 1024 px) y escritorio.
+| Página | Español | Inglés |
+|---|---|---|
+| Inicio | `/` | `/en/` |
+| Caso de estudio | `/proyectos/<slug>/` | `/en/projects/<slug>/` |
+
+- **Casos de estudio** por proyecto: problema, qué construí, decisiones clave, resultados, límites, lo que aprendí y qué haría después.
+- **Tema claro/oscuro**: sigue al sistema y el botón del encabezado lo fija (se guarda en el navegador, sin parpadeo).
+- **Idioma por URL**: `joseromo.vercel.app/en/` es el enlace para reclutadores internacionales. Cada página enlaza a su gemela y declara `hreflang` para Google. A quien abre la versión en español con el navegador en otro idioma se le ofrece la versión en inglés.
+- **SEO**: metadatos por página, `sitemap.xml`, `robots.txt` y datos estructurados de persona.
+- **Navegación**: menú desplegable en el teléfono, sección activa resaltada al hacer scroll y enlace "Saltar al contenido" para teclado.
+- **404 propio** y bilingüe en `app/global-not-found.tsx`.
 
 ## Correr en local
 
@@ -14,80 +22,44 @@ npm run dev        # http://localhost:3000
 npm run build      # genera /out (sitio estático)
 ```
 
-## Cómo actualizar el contenido
+## Dónde se edita cada cosa
 
-Todo está en el objeto `C` al inicio de `app/page.tsx`. Cada texto va en los dos idiomas: `{ es: "...", en: "..." }`.
+| Qué | Archivo |
+|---|---|
+| Textos del inicio, "Ahora mismo", experiencia, habilidades, formación, certificaciones, contacto | `lib/content.ts` |
+| Proyectos y casos de estudio (cifras, decisiones, resultados, imágenes) | `lib/projects.ts` |
+| Gráficos y diagramas de los casos (BNPL, silueta, arquitecturas) | `components/Visuals.tsx` |
+| Diseño del inicio y de los casos | `components/Home.tsx`, `components/CaseStudy.tsx` |
+| Colores de cada tema | `app/globals.css` |
+| Imágenes | `public/img/` y `public/img/projects/` |
+| CV que se descarga | `public/cv/Jose_Romo_Software_Developer_CV_ES.pdf` y `..._EN.pdf` |
+
+Cada texto va en los dos idiomas: `{ es: "...", en: "..." }`.
+
+### Actualizar "Ahora mismo"
+
+En `lib/content.ts`, objeto `NOW`: cambia las tarjetas y la fecha de `updated`. Si una tarjeta apunta a un caso de estudio, ponle `href` con el slug del proyecto.
 
 ### Agregar una certificación
 
-Busca `certs: [` y agrega una línea:
+En `lib/content.ts`, arreglo `CERTS`, agrega `{ name, org, date }`. El contador del inicio se actualiza solo.
+**No pongas IDs de credencial del SENA:** contienen tu número de cédula.
 
-```ts
-{ name: "AWS Cloud Practitioner", org: "Amazon Web Services", date: { es: "Nov 2026", en: "Nov 2026" } },
-```
+### Agregar un proyecto con caso de estudio
 
-- `name` puede ser texto simple o `{ es, en }` si el nombre cambia por idioma.
-- Si no tiene fecha, usa `date: { es: "", en: "" }`.
-- El contador "certificaciones técnicas" del inicio se actualiza solo.
-- **No pongas IDs de credencial del SENA:** contienen tu número de cédula.
+1. En `lib/projects.ts`, copia uno de los objetos de `PROJECTS` y cambia sus datos. El `slug` define la URL.
+2. Pon sus imágenes en `public/img/projects/`. Para capturas con versión clara y oscura usa `kind: "shots"`; para varios gráficos de matplotlib en cuadrícula, `kind: "charts"` (en `results.charts`).
+3. La página del caso, el sitemap, "Siguiente proyecto" y el contador se generan solos.
+4. La tarjeta del inicio para los cinco proyectos actuales está diseñada a mano en `components/Home.tsx`. Un proyecto nuevo necesita su tarjeta ahí, o puedes listarlo en `EXTRA_PROJECTS` para que salga como tarjeta simple sin caso de estudio.
 
-### Agregar un proyecto
+## Desplegar
 
-Busca `more: [] as MoreProject[]` y agrega un objeto dentro de los corchetes:
-
-```ts
-more: [
-  {
-    tag: { es: "IA · Agentes", en: "AI · Agents" },
-    name: { es: "Mi proyecto", en: "My project" },
-    body: { es: "Qué hace en una o dos frases.", en: "What it does in one or two sentences." },
-    stack: ["Python", "LangGraph", "FastAPI"],
-    repo: "https://github.com/JoseRomo16/mi-proyecto",
-    demo: "https://mi-proyecto.vercel.app", // opcional
-  },
-] as MoreProject[],
-```
-
-La tarjeta aparece sola debajo de los cinco proyectos destacados y el contador "proyectos públicos" se actualiza.
-Si un proyecto nuevo merece una tarjeta destacada con gráfica propia (como BNPL o AutoValor), eso sí requiere editar el diseño. Pídeselo a Claude.
-
-### Otros cambios frecuentes
-
-| Qué | Dónde (en `app/page.tsx`) |
-|---|---|
-| Correo, WhatsApp, LinkedIn, GitHub, enlace del CV | `LINKS` |
-| Titular y texto del inicio | `C.hero` |
-| Horas de experiencia, nivel de inglés | `C.stats` |
-| Cargos y logros | `C.experience.jobs` |
-| Habilidades | `C.skills.groups` |
-| Avance de AutoValor (fases listas) | `C.projects.autovalor.done` |
-
-### Archivos
-
-| Archivo | Qué es |
-|---|---|
-| `app/page.tsx` | La landing completa |
-| `app/globals.css` | Colores del modo claro y oscuro |
-| `app/layout.tsx` | SEO, datos estructurados y fuente Inter |
-| `public/img/` | Foto y gráfico de K-means |
-| `public/cv/Jose_Luis_Romo_CV_EN.pdf` | CV que se descarga (reemplázalo cuando actualices el CV) |
-| `docs/perfil-consolidado.md` | Fuente de verdad del contenido |
-
-## Vista previa en un solo archivo
+Haz commit y push a GitHub: Vercel publica solo. No necesita variables de entorno.
 
 ```bash
-npm run build
-python scripts/make-preview.py   # -> preview/jose-romo-landing.html
+git add .
+git commit -m "Casos de estudio, inglés en /en, tema claro/oscuro"
+git push
 ```
 
-El archivo resultante abre con doble clic, sin servidor ni internet.
-
-## Desplegar en Vercel
-
-```bash
-git init && git add . && git commit -m "Portfolio"
-git remote add origin https://github.com/JoseRomo16/portfolio.git
-git push -u origin main
-```
-
-Luego en vercel.com → *Add New Project* → importa el repo → *Deploy*. Después actualiza `metadataBase` en `app/layout.tsx` con tu dominio final.
+Después, pasa `https://joseromo.vercel.app` y `https://joseromo.vercel.app/en/` por el Post Inspector de LinkedIn para refrescar las vistas previas.
