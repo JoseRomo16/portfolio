@@ -61,6 +61,22 @@ export const UI = {
   footer: { es: "Hecho con Next.js, React y Tailwind CSS.", en: "Built with Next.js, React and Tailwind CSS." },
 };
 
+/** Página 404 (app/global-not-found.tsx). */
+export const NOT_FOUND = {
+  meta: "404 — Jose Luis Romo Melo",
+  code: { es: "Error 404", en: "Error 404" },
+  title: { es: "Esta página no existe.", en: "This page doesn't exist." },
+  body: {
+    es: "Puede que el enlace esté mal escrito o que la página haya cambiado de lugar. Desde aquí puedes volver al inicio o ir directo a un caso de estudio.",
+    en: "The link may be mistyped, or the page may have moved. From here you can go back home or jump straight to a case study.",
+  },
+  home: { es: "Ir al inicio", en: "Go home" },
+  contact: { es: "Contactar", en: "Get in touch" },
+  cases: { es: "Casos de estudio", en: "Case studies" },
+  /** Botón que cambia el idioma de esta misma página. */
+  switchTo: { es: "View this page in English", en: "Ver esta página en español" },
+};
+
 export const HERO = {
   status: { es: "Disponible para roles remotos", en: "Open to remote roles" },
   title: {

@@ -23,7 +23,7 @@ function toggleTheme() {
 }
 
 /** Botón de tema. Los íconos y etiquetas se intercambian con CSS, sin parpadeo ni estado. */
-function ThemeToggle({ l, withLabel = false, className = "" }: { l: Lang; withLabel?: boolean; className?: string }) {
+export function ThemeToggle({ l, withLabel = false, className = "" }: { l: Lang; withLabel?: boolean; className?: string }) {
   // Con etiqueta visible se usa la corta ("Tema oscuro"); sin ella, la completa solo para lectores de pantalla.
   const label = (long: "themeToDark" | "themeToLight", short: "themeDark" | "themeLight") =>
     withLabel ? <span>{UI.nav[short][l]}</span> : <span className="sr-only">{UI.nav[long][l]}</span>;

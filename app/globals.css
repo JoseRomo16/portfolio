@@ -64,6 +64,11 @@
   :root:not([data-theme="light"]) .only-dark { display: revert; }
 }
 
+/* Bloques por idioma en páginas que llevan ambos (la 404). Español por defecto. */
+.only-en { display: none; }
+:root[data-lang="en"] .only-es { display: none; }
+:root[data-lang="en"] .only-en { display: revert; }
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 4.5rem;
