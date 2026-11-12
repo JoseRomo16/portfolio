@@ -4,9 +4,10 @@
  */
 import type { Lang, T } from "@/lib/i18n";
 import { num, tx } from "@/lib/i18n";
-import type { Visual } from "@/lib/projects";
+import { CASE_UI, type Visual } from "@/lib/projects";
 import { SIZES, srcSet } from "@/lib/images";
 import { ChevronRight } from "./Icons";
+import { LightboxGroup, type LightboxItem, ZoomTrigger } from "./Lightbox";
 
 /* ───────────── Marcos ───────────── */
 
@@ -53,49 +54,84 @@ function ThemedShot({ light, dark, alt, w, h, sizes, priority }: { light: string
 export function VisualBlock({ v, l, priority = false }: { v: Visual; l: Lang; priority?: boolean }) {
   // El visual principal ocupa todo el contenedor; los demás van en la columna de contenido.
   const single = priority ? SIZES.full : SIZES.column;
+  const L = CASE_UI.lightbox;
+  const labels = { open: L.open[l], close: L.close[l], prev: L.prev[l], next: L.next[l], counter: L.counter[l], dialog: L.dialog[l] };
+  const source = (src: string, w: number) => ({ src, srcSet: srcSet(src, w) });
+
   if (v.kind === "shots") {
     const sizes = v.items.length > 1 ? SIZES.half : single;
+    const items: LightboxItem[] = v.items.map((it) => ({
+      light: source(it.light, it.w),
+      dark: source(it.dark, it.w),
+      alt: it.alt[l],
+      caption: it.caption[l],
+      w: it.w,
+      h: it.h,
+    }));
     return (
-      <div className={`grid gap-8 ${v.items.length > 1 ? "lg:grid-cols-2" : ""}`}>
-        {v.items.map((it) => (
-          <Figure key={it.light} caption={it.caption} l={l}>
-            <ThemedShot light={it.light} dark={it.dark} alt={it.alt[l]} w={it.w} h={it.h} sizes={sizes} priority={priority} />
-          </Figure>
-        ))}
-      </div>
+      <LightboxGroup items={items} labels={labels}>
+        <div className={`grid gap-8 ${v.items.length > 1 ? "lg:grid-cols-2" : ""}`}>
+          {v.items.map((it, i) => (
+            <Figure key={it.light} caption={it.caption} l={l}>
+              <ZoomTrigger index={i} alt={it.alt[l]}>
+                <ThemedShot light={it.light} dark={it.dark} alt={it.alt[l]} w={it.w} h={it.h} sizes={sizes} priority={priority} />
+              </ZoomTrigger>
+            </Figure>
+          ))}
+        </div>
+      </LightboxGroup>
     );
   }
   if (v.kind === "image") {
     // Las figuras de matplotlib tienen fondo blanco: van en una tarjeta blanca en ambos temas.
+    const item: LightboxItem = { light: source(v.src, v.w), alt: v.alt[l], caption: v.caption[l], w: v.w, h: v.h, white: true };
     return (
-      <Figure caption={v.caption} l={l}>
-        <div className={`overflow-hidden rounded-2xl bg-white p-3 ring-1 ring-hair sm:p-5 ${v.narrow ? "max-w-[600px]" : ""}`}>
-          <Img
-            src={v.src}
-            alt={v.alt[l]}
-            w={v.w}
-            h={v.h}
-            sizes={v.narrow ? "(min-width: 640px) 560px, calc(100vw - 56px)" : single}
-            className="mx-auto block h-auto w-full max-w-[900px]"
-            eager={priority}
-          />
-        </div>
-      </Figure>
+      <LightboxGroup items={[item]} labels={labels}>
+        <Figure caption={v.caption} l={l}>
+          <div className={v.narrow ? "max-w-[600px]" : ""}>
+            <ZoomTrigger index={0} alt={v.alt[l]}>
+              <div className="overflow-hidden rounded-2xl bg-white p-3 ring-1 ring-hair sm:p-5">
+                <Img
+                  src={v.src}
+                  alt={v.alt[l]}
+                  w={v.w}
+                  h={v.h}
+                  sizes={v.narrow ? "(min-width: 640px) 560px, calc(100vw - 56px)" : single}
+                  className="mx-auto block h-auto w-full max-w-[900px]"
+                  eager={priority}
+                />
+              </div>
+            </ZoomTrigger>
+          </div>
+        </Figure>
+      </LightboxGroup>
     );
   }
   if (v.kind === "charts") {
+    const items: LightboxItem[] = v.items.map((it) => ({
+      light: source(it.src, it.w),
+      alt: it.alt[l],
+      caption: it.caption[l],
+      w: it.w,
+      h: it.h,
+      white: true,
+    }));
     return (
-      <div className="grid gap-6 md:grid-cols-2">
-        {v.items.map((it, i) => (
-          <div key={it.src} className={v.items.length % 2 === 1 && i === v.items.length - 1 ? "md:col-span-2 md:mx-auto md:w-1/2" : ""}>
-            <Figure caption={it.caption} l={l}>
-              <div className="overflow-hidden rounded-2xl bg-white p-3 ring-1 ring-hair">
-                <Img src={it.src} alt={it.alt[l]} w={it.w} h={it.h} sizes={SIZES.half} className="block h-auto w-full" />
-              </div>
-            </Figure>
-          </div>
-        ))}
-      </div>
+      <LightboxGroup items={items} labels={labels}>
+        <div className="grid gap-6 md:grid-cols-2">
+          {v.items.map((it, i) => (
+            <div key={it.src} className={v.items.length % 2 === 1 && i === v.items.length - 1 ? "md:col-span-2 md:mx-auto md:w-1/2" : ""}>
+              <Figure caption={it.caption} l={l}>
+                <ZoomTrigger index={i} alt={it.alt[l]}>
+                  <div className="overflow-hidden rounded-2xl bg-white p-3 ring-1 ring-hair">
+                    <Img src={it.src} alt={it.alt[l]} w={it.w} h={it.h} sizes={SIZES.half} className="block h-auto w-full" />
+                  </div>
+                </ZoomTrigger>
+              </Figure>
+            </div>
+          ))}
+        </div>
+      </LightboxGroup>
     );
   }
   const D = DIAGRAMS[v.name];

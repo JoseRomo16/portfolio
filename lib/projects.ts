@@ -865,6 +865,15 @@ export const CASE_UI = {
   nextProject: { es: "Siguiente proyecto", en: "Next project" },
   metric: { es: "Métrica", en: "Metric" },
   toc: { es: "En esta página", en: "On this page" },
+  /** Visor de imágenes de los casos de estudio. "{i}" y "{n}" se reemplazan por la posición. */
+  lightbox: {
+    open: { es: "Ampliar imagen", en: "Enlarge image" },
+    close: { es: "Cerrar", en: "Close" },
+    prev: { es: "Imagen anterior", en: "Previous image" },
+    next: { es: "Imagen siguiente", en: "Next image" },
+    counter: { es: "{i} de {n}", en: "{i} of {n}" },
+    dialog: { es: "Visor de imágenes", en: "Image viewer" },
+  },
   talk: { es: "¿Te interesa cómo trabajo?", en: "Interested in how I work?" },
   talkBody: {
     es: "Escríbeme y conversamos sobre tu equipo y tus datos.",
