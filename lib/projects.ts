@@ -864,6 +864,7 @@ export const CASE_UI = {
   },
   nextProject: { es: "Siguiente proyecto", en: "Next project" },
   metric: { es: "Métrica", en: "Metric" },
+  toc: { es: "En esta página", en: "On this page" },
   talk: { es: "¿Te interesa cómo trabajo?", en: "Interested in how I work?" },
   talkBody: {
     es: "Escríbeme y conversamos sobre tu equipo y tus datos.",

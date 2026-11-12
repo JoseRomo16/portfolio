@@ -5,16 +5,20 @@ import { CASE_UI, PROJECTS, type Project, type Table } from "@/lib/projects";
 import { LangSuggest, SiteHeader } from "./Chrome";
 import { Contact, Footer, SkipLink, TextLink } from "./Home";
 import { ArrowUpRight, ChevronLeft, ChevronRight, GitHub } from "./Icons";
+import { CaseToc } from "./CaseToc";
 import { VisualBlock } from "./Visuals";
 
-/** Sección del caso: título a la izquierda (fijo al hacer scroll en escritorio), contenido a la derecha. */
+/**
+ * Sección del caso: título en línea, encima del contenido. En escritorio la columna izquierda
+ * la ocupa el índice "En esta página" (CaseToc), que ya nombra cada sección y marca la activa.
+ */
 function Block({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
-    <section aria-labelledby={id} className="grid gap-6 border-t border-hair py-14 md:py-20 lg:grid-cols-[14rem_1fr] lg:gap-12">
-      <h2 id={id} className="text-[1.5rem] font-bold leading-tight tracking-[-0.025em] lg:sticky lg:top-24 lg:self-start">
+    <section aria-labelledby={id} className="border-t border-hair py-14 first:border-t-0 first:pt-0 md:py-20 md:first:pt-0">
+      <h2 id={id} className="mb-8 text-[1.75rem] font-bold leading-tight tracking-[-0.03em] md:text-[2rem]">
         {title}
       </h2>
-      <div className="min-w-0">{children}</div>
+      {children}
     </section>
   );
 }
@@ -71,6 +75,10 @@ export function CaseStudyPage({ p, l }: { p: Project; l: Lang }) {
   const next = PROJECTS[(i + 1) % PROJECTS.length];
   const alt = projectPath(l === "es" ? "en" : "es", p.slug);
   const name = tx(p.name, l);
+  // Índice: solo las secciones que existen en este caso, en el orden de la página.
+  const toc = (["problem", "built", "decisions", "results", "limits", "learned", "next"] as const)
+    .filter((id) => id !== "limits" || p.limits)
+    .map((id) => ({ id, label: S[id][l] }));
 
   return (
     <>
@@ -150,7 +158,11 @@ export function CaseStudyPage({ p, l }: { p: Project; l: Lang }) {
             </dl>
           </div>
 
-          <div className={`${container} mt-16 md:mt-24`}>
+          <div className={`${container} mt-16 md:mt-24 lg:grid lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-12`}>
+            <aside className="hidden lg:block">
+              <CaseToc title={U.toc[l]} items={toc} />
+            </aside>
+            <div className="min-w-0">
             <Block id="problem" title={S.problem[l]}>
               <Prose items={p.problem} l={l} />
             </Block>
@@ -235,7 +247,10 @@ export function CaseStudyPage({ p, l }: { p: Project; l: Lang }) {
                 </div>
               ))}
             </section>
+            </div>
+          </div>
 
+          <div className={container}>
             {/* Siguiente proyecto */}
             <nav aria-label={U.nextProject[l]} className="border-t border-hair py-14 md:py-20">
               <Link href={projectPath(l, next.slug)} className="group block rounded-3xl bg-tile p-8 ring-1 ring-hair transition-[transform,box-shadow] duration-300 motion-safe:hover:scale-[1.01] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] md:p-10">
