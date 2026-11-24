@@ -44,7 +44,7 @@ function ThemedShot({ light, dark, alt, w, h, sizes, priority }: { light: string
   const cls = "block h-auto w-full";
   // La versión oscura siempre es lazy: oculta con display:none no se descarga hasta que se usa.
   return (
-    <div className="overflow-hidden rounded-2xl bg-tile ring-1 ring-hair">
+    <div className="overflow-hidden rounded-lg bg-tile ring-1 ring-hair">
       <Img src={light} alt={alt} w={w} h={h} sizes={sizes} className={`only-light ${cls}`} eager={priority} />
       <Img src={dark} alt={alt} w={w} h={h} sizes={sizes} className={`only-dark ${cls}`} />
     </div>
@@ -90,7 +90,7 @@ export function VisualBlock({ v, l, priority = false }: { v: Visual; l: Lang; pr
         <Figure caption={v.caption} l={l}>
           <div className={v.narrow ? "max-w-[600px]" : ""}>
             <ZoomTrigger index={0} alt={v.alt[l]}>
-              <div className="overflow-hidden rounded-2xl bg-white p-3 ring-1 ring-hair sm:p-5">
+              <div className="overflow-hidden rounded-lg bg-white p-3 ring-1 ring-hair sm:p-5">
                 <Img
                   src={v.src}
                   alt={v.alt[l]}
@@ -123,7 +123,7 @@ export function VisualBlock({ v, l, priority = false }: { v: Visual; l: Lang; pr
             <div key={it.src} className={v.items.length % 2 === 1 && i === v.items.length - 1 ? "md:col-span-2 md:mx-auto md:w-1/2" : ""}>
               <Figure caption={it.caption} l={l}>
                 <ZoomTrigger index={i} alt={it.alt[l]}>
-                  <div className="overflow-hidden rounded-2xl bg-white p-3 ring-1 ring-hair">
+                  <div className="overflow-hidden rounded-lg bg-white p-3 ring-1 ring-hair">
                     <Img src={it.src} alt={it.alt[l]} w={it.w} h={it.h} sizes={SIZES.half} className="block h-auto w-full" />
                   </div>
                 </ZoomTrigger>
@@ -137,7 +137,7 @@ export function VisualBlock({ v, l, priority = false }: { v: Visual; l: Lang; pr
   const D = DIAGRAMS[v.name];
   return (
     <Figure caption={v.caption} l={l}>
-      <div className="rounded-2xl bg-tile p-5 ring-1 ring-hair sm:p-8">
+      <div className="rounded-lg bg-tile p-5 ring-1 ring-hair sm:p-8">
         <D l={l} />
       </div>
     </Figure>
@@ -161,10 +161,10 @@ function AutoValorPipeline({ l }: { l: Lang }) {
       <ol className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((s, i) => (
           <li key={s.title.en} className="flex">
-            <div className="w-full rounded-xl bg-card p-4 ring-1 ring-hair">
+            <div className="w-full rounded-md bg-card p-4 ring-1 ring-hair">
               <p className="flex items-center gap-2 text-[15px] font-semibold">
                 {s.dot && <span className="size-2.5 rounded-full" style={{ background: s.dot }} aria-hidden />}
-                <span className="text-[12px] font-medium text-sub tabular-nums">{i + 1}</span>
+                <span className="font-mono text-[12px] font-medium text-sub">{i + 1}</span>
                 {s.title[l]}
               </p>
               <p className="mt-1.5 text-[13px] leading-snug text-sub">{s.body[l]}</p>
@@ -187,7 +187,7 @@ function Bar({ value, total, strong, label }: { value: number; total: number; st
   return (
     <div className="h-3 w-full overflow-hidden rounded-full bg-ink/[0.07]" role="img" aria-label={label}>
       <div
-        className={`h-full rounded-r-[4px] ${strong ? "bg-ink" : "bg-mute"}`}
+        className={`h-full rounded-r-[4px] ${strong ? "bg-accent" : "bg-mute"}`}
         style={{ width: `${(value / total) * 100}%` }}
         title={label}
       />
@@ -202,7 +202,7 @@ function Legend({ l }: { l: Lang }) {
         <span className="h-2.5 w-4 rounded-sm bg-mute" aria-hidden /> {l === "es" ? "V1, línea base" : "V1, baseline"}
       </li>
       <li className="flex items-center gap-2">
-        <span className="h-2.5 w-4 rounded-sm bg-ink" aria-hidden /> {l === "es" ? "V2, tras una iteración" : "V2, after one iteration"}
+        <span className="h-2.5 w-4 rounded-sm bg-accent" aria-hidden /> {l === "es" ? "V2, tras una iteración" : "V2, after one iteration"}
       </li>
     </ul>
   );
@@ -225,7 +225,7 @@ function BnplVersions({ l }: { l: Lang }) {
             {(["v1", "v2"] as const).map((k) => (
               <div key={k} className="grid grid-cols-[minmax(0,1fr)_3rem] items-center gap-4">
                 <Bar value={g[k]} total={g.total} strong={k === "v2"} label={`${k.toUpperCase()}: ${g[k]} / ${g.total}`} />
-                <span className="text-right text-[1.25rem] font-bold leading-none tracking-[-0.03em] tabular-nums">{g[k]}</span>
+                <span className="text-right font-mono text-[1.25rem] font-medium leading-none">{g[k]}</span>
               </div>
             ))}
           </div>
@@ -275,7 +275,7 @@ function BnplCategories({ l }: { l: Lang }) {
                   {(["v1", "v2"] as const).map((k) => (
                     <div key={k} className="grid grid-cols-[minmax(0,1fr)_2.75rem] items-center gap-3">
                       <Bar value={r[k]} total={r.n} strong={k === "v2"} label={`${r.name[l]} ${k.toUpperCase()}: ${r[k]} / ${r.n}`} />
-                      <span className="text-right text-[13px] text-sub2 tabular-nums">
+                      <span className="text-right font-mono text-[13px] text-sub2">
                         {r[k]}/{r.n}
                       </span>
                     </div>
@@ -313,15 +313,15 @@ function KmeansSilhouette({ l }: { l: Lang }) {
           const best = k === 5;
           return (
             <div key={k} className="flex flex-1 flex-col items-center justify-end gap-2" title={`K = ${k}: ${num(v, l, 3)}`}>
-              <span className={`text-[12px] tabular-nums ${best ? "font-semibold text-ink" : "text-sub"}`}>{num(v, l, 2)}</span>
-              <div className={`w-full max-w-[44px] rounded-t-[4px] ${best ? "bg-ink" : "bg-mute/60"}`} style={{ height: `${(v / max) * H}px` }} />
+              <span className={`font-mono text-[12px] ${best ? "font-semibold text-accent" : "text-sub"}`}>{num(v, l, 2)}</span>
+              <div className={`w-full max-w-[44px] rounded-t-[4px] ${best ? "bg-accent" : "bg-mute/60"}`} style={{ height: `${(v / max) * H}px` }} />
             </div>
           );
         })}
       </div>
       <div className="mt-2 flex gap-1.5 border-t border-hair pt-2 sm:gap-3" aria-hidden>
         {data.map(([k]) => (
-          <span key={k} className={`flex-1 text-center text-[12px] tabular-nums ${k === 5 ? "font-semibold text-ink" : "text-sub"}`}>
+          <span key={k} className={`flex-1 text-center font-mono text-[12px] ${k === 5 ? "font-semibold text-accent" : "text-sub"}`}>
             K={k}
           </span>
         ))}
@@ -354,7 +354,7 @@ function FinanceUniverse({ l }: { l: Lang }) {
         <p className="text-[13px] font-semibold text-sub">{l === "es" ? "9 activos" : "9 assets"}</p>
         <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
           {classes.map((c) => (
-            <li key={c.name.en} className="rounded-xl bg-card p-3.5 ring-1 ring-hair">
+            <li key={c.name.en} className="rounded-md bg-card p-3.5 ring-1 ring-hair">
               <p className="text-[12px] font-medium text-sub">{c.name[l]}</p>
               <p className="mt-1 text-[15px] font-semibold leading-snug">{c.items.join(", ")}</p>
             </li>
@@ -363,7 +363,7 @@ function FinanceUniverse({ l }: { l: Lang }) {
       </div>
       <div>
         <p className="text-[13px] font-semibold text-sub">{l === "es" ? "5 métricas, el mismo cálculo para todos" : "5 metrics, the same calculation for all"}</p>
-        <dl className="mt-3 divide-y divide-hair rounded-xl bg-card ring-1 ring-hair">
+        <dl className="mt-3 divide-y divide-hair rounded-md bg-card ring-1 ring-hair">
           {metrics.map((m) => (
             <div key={m.name.en} className="grid grid-cols-[7.5rem_1fr] gap-3 px-4 py-3 text-[14px]">
               <dt className="font-semibold">{m.name[l]}</dt>
@@ -389,10 +389,10 @@ function NotesArchitecture({ l }: { l: Lang }) {
       <ol className="grid gap-2 md:grid-cols-3 md:gap-0">
         {nodes.map((n, i) => (
           <li key={n.name} className="relative flex md:pr-6">
-            <div className="w-full rounded-xl bg-card p-5 ring-1 ring-hair">
+            <div className="w-full rounded-md bg-card p-5 ring-1 ring-hair">
               <div className="flex items-baseline justify-between gap-3">
                 <p className="text-[17px] font-semibold">{n.name}</p>
-                <span className="rounded-full bg-soft px-2 py-0.5 text-[12px] font-medium text-sub2">{n.host}</span>
+                <span className="rounded-md bg-soft px-2 py-0.5 font-mono text-[11px] font-medium text-sub2">{n.host}</span>
               </div>
               <p className="mt-1 text-[13px] font-medium text-sub2">{l === "en" ? n.tech.replace("export estático", "static export").replace("Migraciones", "Migrations") : n.tech}</p>
               <p className="mt-2 text-[13px] leading-snug text-sub">{n.detail[l]}</p>
@@ -426,10 +426,10 @@ const DIAGRAMS = {
 /** Mini gráfica de BNPL para la tarjeta del inicio. */
 export function BnplMini({ l }: { l: Lang }) {
   return (
-    <div className="rounded-2xl bg-card p-5 ring-1 ring-hair">
+    <div className="rounded-lg bg-card p-6 ring-1 ring-hair">
       <div className="flex items-baseline justify-between gap-3">
         <span className="text-[13px] font-semibold">{l === "es" ? "Casos de evaluación superados" : "Evaluation cases passed"}</span>
-        <span className="text-[12px] text-sub tabular-nums">/ 15</span>
+        <span className="font-mono text-[12px] text-sub">/ 15</span>
       </div>
       <div className="mt-4 space-y-3">
         {[
@@ -438,7 +438,7 @@ export function BnplMini({ l }: { l: Lang }) {
         ].map((b) => (
           <div key={b.k} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1">
             <span className="text-[12px] text-sub">{tx(b.n, l)}</span>
-            <span className="row-span-2 self-end text-[1.5rem] font-bold leading-none tracking-[-0.04em] tabular-nums">{b.v}</span>
+            <span className="row-span-2 self-end font-mono text-[1.6rem] font-medium leading-none">{b.v}</span>
             <Bar value={b.v} total={15} strong={b.s} label={`${tx(b.n, l)}: ${b.v} / 15`} />
           </div>
         ))}
