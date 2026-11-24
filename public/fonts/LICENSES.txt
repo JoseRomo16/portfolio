@@ -1,0 +1,2 @@
+Newsreader — Copyright 2020 The Newsreader Project Authors. JetBrains Mono — Copyright 2020 The JetBrains Mono Project Authors.
+Ambas bajo SIL Open Font License 1.1 (ver assets/og-fonts/OFL.txt).

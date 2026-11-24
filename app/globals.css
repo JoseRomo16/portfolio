@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
-/* Inter variable (pesos 100–900 y tamaño óptico), subconjunto latino. Se precarga en el <head>
-   (FontPreload en RootHtml.tsx). "Inter Fallback" es Arial con las métricas ajustadas a Inter:
-   mientras la fuente llega, el texto ocupa lo mismo y no se mueve al cambiar (CLS 0). */
+/* ───────────── Fuentes (archivos propios, subconjunto latino, OFL) ─────────────
+   Inter: cuerpo. Newsreader: nombre y títulos destacados. JetBrains Mono: cifras, fechas y etiquetas.
+   Cada una tiene un respaldo local con métricas ajustadas: mientras la fuente llega, el texto ocupa
+   lo mismo y no se mueve al cambiar (CLS 0). Las dos primeras se precargan en RootHtml.tsx. */
 @font-face {
   font-family: "Inter";
   src: url("/fonts/InterVariable-latin.woff2") format("woff2");
@@ -18,59 +19,102 @@
   line-gap-override: 0%;
   size-adjust: 107.89%;
 }
+@font-face {
+  font-family: "Newsreader";
+  src: url("/fonts/Newsreader-latin.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+/* Medido contra Times: Newsreader es 5,75 % más ancha. */
+@font-face {
+  font-family: "Newsreader Fallback";
+  src: local("Times New Roman"), local("Liberation Serif");
+  ascent-override: 69.5%;
+  descent-override: 25.06%;
+  line-gap-override: 0%;
+  size-adjust: 105.75%;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-latin.woff2") format("woff2");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono Fallback";
+  src: local("Courier New"), local("Liberation Mono");
+  ascent-override: 101.7%;
+  descent-override: 29.9%;
+  line-gap-override: 0%;
+  size-adjust: 100.3%;
+}
 
-/* Colores semánticos. Modo claro aquí; modo oscuro abajo (sigue la preferencia del sistema). */
+/* ───────────── Colores ─────────────
+   Claro: papel (#F8F7F4) y tinta (#15171A). Oscuro: editorial profundo (#0D0F12 / #14181F).
+   Un solo acento, cobalto, en dos tonos para pasar WCAG AA (≥ 4,5:1) sobre todas las superficies:
+   #2257D6 en claro y #60A5FA en oscuro. Úsalo solo en el CTA principal, enlaces, estados activos y
+   cifras clave. "mute" es decorativo (viñetas, divisores): no lo uses para texto. */
 @theme {
-  --color-page: #ffffff;
-  --color-alt: #fafafa;
-  --color-tile: #f5f5f7;
+  --color-page: #f8f7f4;
+  --color-alt: #f3f1ec;
+  --color-tile: #efede8;
   --color-card: #ffffff;
-  --color-soft: #f0f0f2;
-  --color-soft-hover: #e4e4e7;
-  --color-ink: #000000;
-  --color-sub: #6e6e73;
-  --color-sub2: #4b4b50;
-  --color-mute: #a1a1a6;
-  --color-hair: rgb(0 0 0 / 0.06);
-  --color-link: #0066cc;
-  --color-cta: #000000;
+  --color-soft: #e9e6e0;
+  --color-soft-hover: #dfdbd3;
+  --color-ink: #15171a;
+  --color-sub: #5c6066;
+  --color-sub2: #3a3d42;
+  --color-mute: #8e8f8c;
+  --color-hair: rgb(21 23 26 / 0.1);
+  --color-link: #2257d6;
+  --color-accent: #2257d6;
+  --color-on-accent: #ffffff;
+  --color-cta: #efede8;
   --font-sans: "Inter", "Inter Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Newsreader", "Newsreader Fallback", Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", "JetBrains Mono Fallback", ui-monospace, "SFMono-Regular", Menlo, monospace;
 }
 
 /* Tema oscuro: sigue al sistema salvo que la persona elija uno con el botón
    (data-theme="light" | "dark" en <html>, guardado en localStorage). */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-page: #000000;
-    --color-alt: #0a0a0b;
-    --color-tile: #161617;
-    --color-card: #232325;
-    --color-soft: #2f2f32;
-    --color-soft-hover: #3a3a3d;
-    --color-ink: #f5f5f7;
-    --color-sub: #a1a1a6;
-    --color-sub2: #c7c7cc;
-    --color-mute: #636366;
-    --color-hair: rgb(255 255 255 / 0.1);
-    --color-link: #2997ff;
-    --color-cta: #161617;
+    --color-page: #0d0f12;
+    --color-alt: #101318;
+    --color-tile: #14181f;
+    --color-card: #1a1f27;
+    --color-soft: #1f252e;
+    --color-soft-hover: #28303b;
+    --color-ink: #e8e6e1;
+    --color-sub: #9ca1a9;
+    --color-sub2: #c6c9ce;
+    --color-mute: #5a616b;
+    --color-hair: rgb(232 230 225 / 0.1);
+    --color-link: #60a5fa;
+    --color-accent: #60a5fa;
+    --color-on-accent: #0d0f12;
+    --color-cta: #14181f;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-    --color-page: #000000;
-    --color-alt: #0a0a0b;
-    --color-tile: #161617;
-    --color-card: #232325;
-    --color-soft: #2f2f32;
-    --color-soft-hover: #3a3a3d;
-    --color-ink: #f5f5f7;
-    --color-sub: #a1a1a6;
-    --color-sub2: #c7c7cc;
-    --color-mute: #636366;
-    --color-hair: rgb(255 255 255 / 0.1);
-    --color-link: #2997ff;
-    --color-cta: #161617;
+    --color-page: #0d0f12;
+    --color-alt: #101318;
+    --color-tile: #14181f;
+    --color-card: #1a1f27;
+    --color-soft: #1f252e;
+    --color-soft-hover: #28303b;
+    --color-ink: #e8e6e1;
+    --color-sub: #9ca1a9;
+    --color-sub2: #c6c9ce;
+    --color-mute: #5a616b;
+    --color-hair: rgb(232 230 225 / 0.1);
+    --color-link: #60a5fa;
+    --color-accent: #60a5fa;
+    --color-on-accent: #0d0f12;
+    --color-cta: #14181f;
     color-scheme: dark;
 }
 
@@ -109,9 +153,17 @@ body {
 }
 
 ::selection {
-  background: #0071e3;
-  color: #ffffff;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
 }
+
+/* Cifras alineadas en columnas donde haya números. */
+.font-mono { font-variant-numeric: tabular-nums; }
+
+/* Desplegable de credenciales: sin el triángulo por defecto (el ícono propio rota). */
+details > summary { list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+details[open] .rotate-on-open { transform: rotate(90deg); }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

@@ -13,8 +13,16 @@ export const UmamiScript = () =>
     <script defer src={UMAMI.src} data-website-id={UMAMI.websiteId} data-domains={UMAMI.domains} />
   ) : null;
 
-/** Precarga la fuente (declarada en globals.css) para que llegue antes del primer pintado. */
-export const FontPreload = () => <link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />;
+/**
+ * Precarga las fuentes que se ven en la primera pantalla (declaradas en globals.css): Inter (cuerpo)
+ * y Newsreader (nombre). La mono no se precarga: aparece más abajo y tiene respaldo con métricas.
+ */
+export const FontPreload = () => (
+  <>
+    <link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+    <link rel="preload" href="/fonts/Newsreader-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+  </>
+);
 
 // Se ejecuta antes de pintar: aplica el tema guardado y evita el parpadeo.
 const THEME_SCRIPT = `try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}`;
