@@ -17,7 +17,7 @@ Sitio personal bilingüe en **Next.js 15 · React 19 · TypeScript · Tailwind C
 - **Navegación**: en el teléfono, menú con secciones, idioma y tema (Esc, tocar fuera o un enlace lo cierran). En escritorio, la sección activa se resalta al hacer scroll.
 - **404 propio** y bilingüe (`app/global-not-found.tsx`), con enlaces a los casos de estudio.
 - **SEO**: metadatos por página, imagen Open Graph propia para cada caso e idioma, `sitemap.xml`, `robots.txt` y datos estructurados de persona.
-- **Rendimiento**: variantes responsivas de las imágenes con `srcset`, fuente precargada con respaldo de métricas ajustadas (sin saltos de layout) y carga diferida fuera de la primera pantalla.
+- **Rendimiento**: variantes responsivas de las imágenes con `srcset`, fuentes precargadas con respaldo de métricas ajustadas (sin saltos de layout) y carga diferida fuera de la primera pantalla.
 - **Analítica sin cookies** con Umami Cloud (ver abajo).
 
 ## Correr en local
@@ -51,7 +51,7 @@ Lighthouse simula un teléfono con la CPU 4× más lenta. En un equipo modesto (
 
 | Qué | Archivo |
 |---|---|
-| Textos del inicio, "Ahora mismo", experiencia, habilidades, formación, certificaciones, contacto, 404 | `lib/content.ts` |
+| Textos del inicio, "Ahora", experiencia, habilidades, formación, certificaciones, contacto, 404 | `lib/content.ts` |
 | Proyectos y casos de estudio (cifras, decisiones, resultados, imágenes) y textos de la interfaz de los casos | `lib/projects.ts` |
 | Gráficos y diagramas de los casos (BNPL, silueta, arquitecturas) | `components/Visuals.tsx` |
 | Diseño del inicio y de los casos | `components/Home.tsx`, `components/CaseStudy.tsx` |
@@ -59,19 +59,25 @@ Lighthouse simula un teléfono con la CPU 4× más lenta. En un equipo modesto (
 | Visor de imágenes / índice del caso | `components/Lightbox.tsx` / `components/CaseToc.tsx` |
 | Imagen Open Graph de los casos | `lib/og.tsx` (diseño) y `app/og/[file]/route.ts` (rutas) |
 | Eventos de analítica | `lib/analytics.ts` |
-| Colores de cada tema y fuente | `app/globals.css` |
+| Colores de cada tema y fuentes | `app/globals.css` (ver "Sistema visual") |
 | Imágenes | `public/img/` y `public/img/projects/` (las variantes de `w/` se generan solas) |
 | CV que se descarga | `public/cv/Jose_Romo_Software_Developer_CV_ES.pdf` y `..._EN.pdf` |
 
 Cada texto va en los dos idiomas: `{ es: "...", en: "..." }`. Ningún componente lleva texto escrito a mano.
 
-### Actualizar "Ahora mismo"
+### Sistema visual
 
-En `lib/content.ts`, objeto `NOW`: cambia las tarjetas y la fecha de `updated`. Si una tarjeta apunta a un caso de estudio, ponle `href` con el slug del proyecto.
+- **Fuentes** (autoalojadas en `public/fonts/`, licencia OFL en `LICENSES.txt`): Newsreader para el nombre y los títulos, Inter para el cuerpo y JetBrains Mono para cifras, fechas y etiquetas de sección. Cada una tiene un respaldo con métricas ajustadas para que no haya saltos al cargar. La imagen Open Graph usa sus versiones `.woff` de `assets/og-fonts/`.
+- **Colores**: tokens en `app/globals.css` (`--color-page`, `--color-ink`, `--color-sub`, `--color-hair`, `--color-accent`…) para claro y oscuro. Fondo papel (#F8F7F4 / #0D0F12) y un solo acento cobalto: #2257D6 en claro y #60A5FA en oscuro, ambos con contraste AA sobre todas las superficies. `--color-mute` es solo decorativo (no para texto).
+- **Reglas**: títulos de sección en mono, mayúsculas pequeñas y sin punto final; separación con líneas (`border-t`) en vez de cajas; `rounded-full` solo para indicadores de estado ("En vivo", "Disponible"); botones y etiquetas con `rounded-md`. Las clases de botón (`btnPrimary`, `btnSecondary`) y de etiqueta (`label`) se exportan desde `components/Home.tsx`.
+
+### Actualizar "Ahora"
+
+En `lib/content.ts`, objeto `NOW`: cambia los elementos de la franja y la fecha de `updated`. Si un elemento apunta a un caso de estudio, ponle `href` con el slug del proyecto.
 
 ### Agregar una certificación
 
-En `lib/content.ts`, arreglo `CERTS`, agrega `{ name, org, date }`. El contador del inicio se actualiza solo.
+En `lib/content.ts`, arreglo `CERTS`, agrega `{ name, org, date }`. Con `featured: true` aparece entre las destacadas (deja cuatro); las demás quedan dentro de "Ver todas las credenciales (n)" y el número se actualiza solo.
 **No pongas IDs de credencial del SENA:** contienen tu número de cédula.
 
 ### Actualizar el CV

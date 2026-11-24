@@ -57,7 +57,7 @@ test.describe("navegación", () => {
     await expect(html).toHaveAttribute("data-theme", "dark");
     await page.reload();
     await expect(html).toHaveAttribute("data-theme", "dark");
-    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe("rgb(0, 0, 0)");
+    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe("rgb(13, 15, 18)"); // #0D0F12
   });
 
   test("el menú móvil abre, bloquea el scroll y cierra", async ({ page }, info) => {

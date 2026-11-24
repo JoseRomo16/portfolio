@@ -19,7 +19,7 @@ export function NotFoundLangToggle() {
       type="button"
       onClick={toggle}
       data-testid="lang-switch"
-      className="rounded-full px-3 py-1.5 text-[13px] font-medium text-link transition-colors hover:bg-ink/[0.06]"
+      className="rounded-md px-3 py-1.5 text-[13px] font-medium text-link transition-colors hover:bg-ink/[0.06]"
     >
       <span className="only-es" lang="en">{NOT_FOUND.switchTo.es}</span>
       <span className="only-en" lang="es">{NOT_FOUND.switchTo.en}</span>
