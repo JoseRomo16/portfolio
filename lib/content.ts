@@ -79,13 +79,14 @@ export const NOT_FOUND = {
 
 export const HERO = {
   status: { es: "Disponible para roles remotos", en: "Open to remote roles" },
+  /** Propuesta en una frase. Ingeniería de Software está en curso: no decir "ingeniero". */
   title: {
-    es: "IA y Data Science con criterio de economista.",
-    en: "AI and data science with an economist's judgment.",
+    es: "Economista y desarrollador de software. IA aplicada, machine learning y pipelines de datos en producción.",
+    en: "Economist and software developer. Applied AI, machine learning and data pipelines in production.",
   },
   body: {
-    es: "Construyo asistentes con LLMs, modelos de machine learning y pipelines de datos, y los conecto con decisiones de negocio. También trabajo como Data Analyst y desarrollador de software.",
-    en: "I build LLM assistants, machine-learning models and data pipelines, and tie them to business decisions. I also work as a data analyst and software developer.",
+    es: "Construyo asistentes con LLMs que se evalúan, modelos con rangos de predicción calibrados y pipelines de datos con pruebas, y los conecto con decisiones de negocio. También trabajo como analista de datos y desarrollador full stack.",
+    en: "I build LLM assistants that get evaluated, models with calibrated prediction ranges and tested data pipelines, and tie them to business decisions. I also work as a data analyst and full-stack developer.",
   },
   contact: { es: "Contactar", en: "Get in touch" },
   projects: { es: "Ver proyectos", en: "See projects" },
@@ -94,97 +95,98 @@ export const HERO = {
   photoAlt: { es: "Retrato de Jose Luis Romo Melo", en: "Portrait of Jose Luis Romo Melo" },
 };
 
-/** "projects" y "certs" se calculan solos a partir de los datos. */
-export const STATS: { key: string; value: T; label: T }[] = [
-  { key: "hours", value: { es: "4.000+ h", en: "4,000+ h" }, label: { es: "de experiencia profesional", en: "of professional experience" } },
-  { key: "english", value: { es: "C1", en: "C1" }, label: { es: "inglés certificado, EF SET", en: "certified English, EF SET" } },
-  { key: "projects", value: { es: "", en: "" }, label: { es: "proyectos públicos con caso de estudio", en: "public projects with a case study" } },
-  { key: "certs", value: { es: "", en: "" }, label: { es: "certificaciones técnicas", en: "technical certifications" } },
+/** Las tres cifras del inicio: las de mayor peso real, cada una con su fuente. */
+export const STATS: { key: string; value: T; label: T; source: T }[] = [
+  {
+    key: "autovalor",
+    value: { es: "10,0 %", en: "10.0%" },
+    label: { es: "de error en carros del modelo en producción", en: "error on cars for the model in production" },
+    source: { es: "AutoValor CO", en: "AutoValor CO" },
+  },
+  {
+    key: "bnpl",
+    value: { es: "5 → 12", en: "5 → 12" },
+    label: { es: "de 15 casos superados tras una iteración", en: "of 15 cases passed after one iteration" },
+    source: { es: "BNPL Support Assistant", en: "BNPL Support Assistant" },
+  },
+  {
+    key: "hours",
+    value: { es: "4.000+ h", en: "4,000+ h" },
+    label: { es: "de experiencia profesional", en: "of professional experience" },
+    source: { es: "2024 — 2026", en: "2024 — 2026" },
+  },
 ];
 
 /**
- * AHORA MISMO — actualízalo cada uno o dos meses.
- * `kind` es la etiqueta corta de cada tarjeta.
+ * AHORA — franja de estado bajo el inicio. Actualízala cada uno o dos meses.
+ * `href` (opcional) enlaza al caso de estudio con ese slug.
  */
-export const NOW = {
-  title: { es: "Ahora mismo.", en: "Right now." },
-  updated: { es: "Actualizado en noviembre de 2026", en: "Updated November 2026" },
+export const NOW: {
+  title: T;
+  updated: T;
+  items: { kind: T; title: T; href?: string }[];
+} = {
+  title: { es: "Ahora", en: "Now" },
+  updated: { es: "nov 2026", en: "Nov 2026" },
   items: [
-    {
-      kind: { es: "Construyendo", en: "Building" },
-      title: { es: "Finance Lab", en: "Finance Lab" },
-      body: {
-        es: "Replicar factores y anomalías de papers de finanzas cuantitativas, con backtesting. Empiezo por los fundamentos en notebooks.",
-        en: "Replicating factors and anomalies from quantitative-finance papers, with backtesting. Starting with the foundations in notebooks.",
-      },
-    },
-    {
-      kind: { es: "Acabo de cerrar", en: "Just shipped" },
-      title: { es: "AutoValor CO", en: "AutoValor CO" },
-      body: {
-        es: "Valoración de vehículos usados en producción: 10,0 % de error en carros y un rango que cumple lo que promete.",
-        en: "Used-vehicle valuation in production: 10.0% error on cars and a price range that delivers what it promises.",
-      },
-      href: "autovalor-co",
-    },
-    {
-      kind: { es: "Estudiando", en: "Studying" },
-      title: { es: "Ingeniería de Software", en: "Software Engineering" },
-      body: {
-        es: "Politécnico Grancolombiano. En paralelo: agentes con LLMs, su evaluación y TypeScript de punta a punta.",
-        en: "Politécnico Grancolombiano. Alongside it: LLM agents, how to evaluate them, and end-to-end TypeScript.",
-      },
-    },
+    { kind: { es: "Construyendo", en: "Building" }, title: { es: "Finance Lab: factores y backtesting", en: "Finance Lab: factors and backtesting" } },
+    { kind: { es: "Recién cerrado", en: "Just shipped" }, title: { es: "AutoValor CO", en: "AutoValor CO" }, href: "autovalor-co" },
+    { kind: { es: "Estudiando", en: "Studying" }, title: { es: "Ingeniería de Software", en: "Software Engineering" } },
+    { kind: { es: "Aprendiendo", en: "Learning" }, title: { es: "Agentes, MLOps y AWS", en: "Agents, MLOps and AWS" } },
   ],
 };
 
 export const SECTIONS = {
   projects: {
-    title: { es: "Proyectos.", en: "Projects." },
+    title: { es: "Proyectos", en: "Projects" },
     lead: {
-      es: "Cada uno con su caso de estudio: el problema, las decisiones y los resultados medidos.",
-      en: "Each one with a case study: the problem, the decisions and the measured results.",
+      es: "Cada proyecto tiene su caso de estudio con el problema, las decisiones y los resultados medidos.",
+      en: "Every project has a case study with the problem, the decisions and the measured results.",
     },
+    flagship: { es: "Insignia", en: "Flagship" },
+    more: { es: "Otros proyectos", en: "More projects" },
   },
-  experience: {
-    title: { es: "Experiencia.", en: "Experience." },
-    lead: {
-      es: "Equipos Scrum, software en producción y datos que sostienen decisiones.",
-      en: "Scrum teams, production software and data that supports decisions.",
-    },
-  },
+  experience: { title: { es: "Experiencia", en: "Experience" }, stack: { es: "Stack", en: "Stack" } },
   skills: {
-    title: { es: "Habilidades.", en: "Skills." },
-    lead: { es: "Del modelo económico al código en producción.", en: "From the economic model to production code." },
-    learning: { es: "Aprendiendo ahora", en: "Learning now" },
+    title: { es: "Habilidades", en: "Skills" },
+    domain: { es: "Dominio", en: "Domain" },
+    stack: { es: "Stack principal", en: "Core stack" },
   },
   education: {
-    title: { es: "Formación.", en: "Education." },
-    lead: { es: "Economía, software e ingeniería, en ese orden.", en: "Economics, software and engineering, in that order." },
+    title: { es: "Formación", en: "Education" },
+    degrees: { es: "Títulos", en: "Degrees" },
     current: { es: "En curso", en: "In progress" },
     certsTitle: { es: "Certificaciones", en: "Certifications" },
+    /** {n} se reemplaza por el total de credenciales. */
+    allCerts: { es: "Ver todas las credenciales ({n})", en: "Show all credentials ({n})" },
     english: { es: "Inglés", en: "English" },
-    englishBody: { es: "EF SET 63/100, agosto de 2026.", en: "EF SET 63/100, August 2026." },
+    englishBody: { es: "EF SET 63/100, agosto de 2026", en: "EF SET 63/100, August 2026" },
     spanish: { es: "Español nativo", en: "Native Spanish" },
-    verify: { es: "Verificar", en: "Verify" },
+    verify: { es: "Verificar certificado", en: "Verify certificate" },
   },
   contact: {
-    title: { es: "Construyamos algo con tus datos.", en: "Let's build something with your data." },
+    label: { es: "Contacto", en: "Contact" },
+    title: { es: "Trabajemos juntos", en: "Let's work together" },
     body: {
-      es: "Busco roles remotos en IA, data science, análisis de datos o desarrollo de software. Respondo en menos de 24 horas.",
-      en: "I'm looking for remote roles in AI, data science, data analysis or software development. I reply within 24 hours.",
+      es: "Busco roles remotos en IA aplicada, ciencia de datos, análisis de datos o desarrollo de software. Respondo en menos de 24 horas.",
+      en: "I'm looking for remote roles in applied AI, data science, data analysis or software development. I reply within 24 hours.",
     },
+    write: { es: "Escribir un correo", en: "Write an email" },
     email: { es: "Correo", en: "Email" },
     copy: { es: "Copiar correo", en: "Copy email" },
     copied: { es: "Correo copiado", en: "Email copied" },
+    cv: { es: "CV en PDF", en: "CV (PDF)" },
   },
 };
 
 export const EXPERIENCE: {
   org: string;
   meta: T;
+  /** Aclaración visible bajo la organización (por ejemplo, fechas que se cruzan con otro cargo). */
+  note?: T;
   roles: { title: T; period: T; points: T[] }[];
-  tags: Tx[];
+  /** Stack en una frase, sin etiquetas sueltas. */
+  stack: T;
 }[] = [
   {
     org: "GSE — Gestión de Seguridad Electrónica",
@@ -210,11 +212,18 @@ export const EXPERIENCE: {
         ],
       },
     ],
-    tags: ["React", "SQL", "Python", "Kubernetes", "Azure DevOps", "Postman", "BPMN / UML", "Scrum"],
+    stack: {
+      es: "React, SQL y Python; Postman para APIs REST; Azure DevOps, BPMN/UML y Scrum; documentación de despliegues sobre Kubernetes.",
+      en: "React, SQL and Python; Postman for REST APIs; Azure DevOps, BPMN/UML and Scrum; deployment documentation on Kubernetes.",
+    },
   },
   {
     org: "Universidad de Nariño",
     meta: { es: "Facultad de Ciencias Económicas · Pasto", en: "School of Economics · Pasto" },
+    note: {
+      es: "Contrato temporal. Coincidió con GSE entre marzo y octubre de 2025.",
+      en: "Temporary contract. Overlapped with GSE from March to October 2025.",
+    },
     roles: [
       {
         title: { es: "Analista de Proyectos — Gestión de Datos", en: "Project Analyst — Data Management" },
@@ -226,19 +235,47 @@ export const EXPERIENCE: {
         ],
       },
     ],
-    tags: ["Excel", { es: "Bases de datos", en: "Databases" }, { es: "Análisis cuantitativo", en: "Quantitative analysis" }],
+    stack: {
+      es: "Excel, bases de datos institucionales y análisis cuantitativo.",
+      en: "Excel, institutional databases and quantitative analysis.",
+    },
   },
 ];
 
-export const SKILLS: { key: string; span: string; name: T; items: Tx[]; learn?: Tx[] }[] = [
-  { key: "ai", span: "sm:col-span-2", name: { es: "IA y LLMs", en: "AI & LLMs" }, items: ["RAG", "Tool calling", "LLM evaluation", "Prompt engineering", "OpenAI-compatible APIs"], learn: [{ es: "Agentes", en: "Agents" }, "AWS", "MLOps"] },
-  { key: "ds", span: "", name: { es: "Data Science y ML", en: "Data science & ML" }, items: ["scikit-learn", "LightGBM", "SHAP", { es: "Regresión", en: "Regression" }, { es: "Predicción conformal", en: "Conformal prediction" }, "K-means"] },
-  { key: "de", span: "", name: { es: "Ingeniería de datos", en: "Data engineering" }, items: ["SQL", "dbt", "DuckDB", "Parquet", "Pandera", "Scraping"] },
-  { key: "bi", span: "", name: { es: "Análisis y BI", en: "Analytics & BI" }, items: ["Power BI", { es: "Excel avanzado", en: "Advanced Excel" }, "pandas", "Stata", "R"] },
-  { key: "dev", span: "lg:col-span-2", name: { es: "Desarrollo de software", en: "Software development" }, items: ["Python", "TypeScript", "React", "Next.js", "NestJS", "Node.js", "FastAPI", "Java", "C#"] },
-  { key: "db", span: "", name: { es: "Bases de datos", en: "Databases" }, items: ["PostgreSQL", "MySQL", "MongoDB", "DuckDB"] },
-  { key: "ops", span: "lg:col-span-2", name: { es: "DevOps y calidad", en: "DevOps & quality" }, items: ["Docker", "Git", "GitHub Actions", "pytest", "Jest", "Playwright", "Render", "Vercel"] },
-  { key: "method", span: "sm:col-span-2 lg:col-span-2", name: { es: "Métodos", en: "Methods" }, items: ["Scrum", "Azure DevOps", "BPMN / UML", "REST APIs", "ADRs", { es: "Documentación técnica", en: "Technical documentation" }] },
+/** Matriz técnica por dominio. Lo que estás aprendiendo va en la franja "Ahora" (NOW). */
+export const SKILLS: { key: string; domain: T; stack: T }[] = [
+  {
+    key: "ai",
+    domain: { es: "IA y Machine Learning", en: "AI & Machine Learning" },
+    stack: {
+      es: "LLMs (RAG, tool calling, evaluación), LightGBM, scikit-learn, SHAP, predicción conformal",
+      en: "LLMs (RAG, tool calling, evaluation), LightGBM, scikit-learn, SHAP, conformal prediction",
+    },
+  },
+  {
+    key: "data",
+    domain: { es: "Ingeniería de Datos y BI", en: "Data Engineering & BI" },
+    stack: {
+      es: "SQL, dbt, DuckDB, Parquet, Pandera, Power BI, Stata, R, Excel avanzado",
+      en: "SQL, dbt, DuckDB, Parquet, Pandera, Power BI, Stata, R, advanced Excel",
+    },
+  },
+  {
+    key: "dev",
+    domain: { es: "Desarrollo Backend y Web", en: "Backend & Web Development" },
+    stack: {
+      es: "Python, FastAPI, TypeScript, Node.js, NestJS, React, Next.js, Java, C#",
+      en: "Python, FastAPI, TypeScript, Node.js, NestJS, React, Next.js, Java, C#",
+    },
+  },
+  {
+    key: "infra",
+    domain: { es: "Infraestructura y Calidad", en: "Infrastructure & Quality" },
+    stack: {
+      es: "PostgreSQL, Docker, Kubernetes, GitHub Actions, pytest, Playwright, BPMN / UML",
+      en: "PostgreSQL, Docker, Kubernetes, GitHub Actions, pytest, Playwright, BPMN / UML",
+    },
+  },
 ];
 
 export const DEGREES: { name: T; org: string; period: T; current?: boolean }[] = [
@@ -247,15 +284,16 @@ export const DEGREES: { name: T; org: string; period: T; current?: boolean }[] =
   { name: { es: "Economía", en: "B.A. Economics" }, org: "Universidad de Nariño", period: { es: "2018 — 2024", en: "2018 — 2024" } },
 ];
 
-// CERTIFICACIONES: agrega { name, org, date }. El contador del inicio se actualiza solo.
+// CERTIFICACIONES: agrega { name, org, date }. Las marcadas con `featured` se ven siempre;
+// el resto queda en el desplegable "Ver todas las credenciales".
 // No pongas IDs de credencial del SENA: contienen tu número de cédula.
-export const CERTS: { name: Tx; org: string; date: T }[] = [
-  { name: "Associate Data Engineer in SQL", org: "DataCamp", date: { es: "Ago 2025", en: "Aug 2025" } },
-  { name: "Intermediate Python", org: "DataCamp", date: { es: "Jul 2026", en: "Jul 2026" } },
-  { name: { es: "Aplicación de la IA en la integración de datos", en: "AI applied to data integration" }, org: "SENA", date: { es: "Mar 2026", en: "Mar 2026" } },
+export const CERTS: { name: Tx; org: string; date: T; featured?: boolean }[] = [
+  { name: "Associate Data Engineer in SQL", org: "DataCamp", date: { es: "Ago 2025", en: "Aug 2025" }, featured: true },
+  { name: "Intermediate Python", org: "DataCamp", date: { es: "Jul 2026", en: "Jul 2026" }, featured: true },
+  { name: { es: "Despliegue de aplicaciones con Docker", en: "Application deployment with Docker" }, org: "SENA", date: { es: "Sep 2025", en: "Sep 2025" }, featured: true },
+  { name: { es: "Aplicación de la IA en la integración de datos", en: "AI applied to data integration" }, org: "SENA", date: { es: "Mar 2026", en: "Mar 2026" }, featured: true },
   { name: { es: "Curso de Power BI", en: "Power BI" }, org: "Código Facilito", date: { es: "Jul 2026", en: "Jul 2026" } },
   { name: { es: "Excel avanzado: análisis y visualización", en: "Advanced Excel: analysis & visualization" }, org: "Código Facilito", date: { es: "Jul 2026", en: "Jul 2026" } },
   { name: { es: "Backend con Node.js y MongoDB", en: "Backend with Node.js & MongoDB" }, org: "SENA", date: { es: "Jul 2026", en: "Jul 2026" } },
-  { name: { es: "Despliegue de aplicaciones con Docker", en: "Application deployment with Docker" }, org: "SENA", date: { es: "Sep 2025", en: "Sep 2025" } },
   { name: { es: "Construcción de bases de datos con MySQL", en: "Building databases with MySQL" }, org: "SENA", date: { es: "", en: "" } },
 ];
