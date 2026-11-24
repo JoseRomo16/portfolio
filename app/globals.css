@@ -55,68 +55,37 @@
    Claro: papel (#F8F7F4) y tinta (#15171A). Oscuro: editorial profundo (#0D0F12 / #14181F).
    Un solo acento, cobalto, en dos tonos para pasar WCAG AA (≥ 4,5:1) sobre todas las superficies:
    #2257D6 en claro y #60A5FA en oscuro. Úsalo solo en el CTA principal, enlaces, estados activos y
-   cifras clave. "mute" es decorativo (viñetas, divisores): no lo uses para texto. */
+   cifras clave. "mute" es decorativo (viñetas, divisores): no lo uses para texto.
+
+   Cada token lleva sus dos valores en un solo lugar: light-dark(claro, oscuro). Cuál se usa lo decide
+   `color-scheme` en <html> (más abajo): sigue al sistema, salvo que la persona elija un tema con el botón.
+   "photo" es el marco de la foto del inicio: claro en ambos temas porque la foto tiene fondo blanco. */
 @theme {
-  --color-page: #f8f7f4;
-  --color-alt: #f3f1ec;
-  --color-tile: #efede8;
-  --color-card: #ffffff;
-  --color-soft: #e9e6e0;
-  --color-soft-hover: #dfdbd3;
-  --color-ink: #15171a;
-  --color-sub: #5c6066;
-  --color-sub2: #3a3d42;
-  --color-mute: #8e8f8c;
-  --color-hair: rgb(21 23 26 / 0.1);
-  --color-link: #2257d6;
-  --color-accent: #2257d6;
-  --color-on-accent: #ffffff;
-  --color-cta: #efede8;
+  --color-page: light-dark(#f8f7f4, #0d0f12);
+  --color-alt: light-dark(#f3f1ec, #101318);
+  --color-tile: light-dark(#efede8, #14181f);
+  --color-card: light-dark(#ffffff, #1a1f27);
+  --color-soft: light-dark(#e9e6e0, #1f252e);
+  --color-soft-hover: light-dark(#dfdbd3, #28303b);
+  --color-ink: light-dark(#15171a, #e8e6e1);
+  --color-sub: light-dark(#5c6066, #9ca1a9);
+  --color-sub2: light-dark(#3a3d42, #c6c9ce);
+  --color-mute: light-dark(#8e8f8c, #5a616b);
+  --color-hair: light-dark(rgb(21 23 26 / 0.1), rgb(232 230 225 / 0.1));
+  --color-link: light-dark(#2257d6, #60a5fa);
+  --color-accent: light-dark(#2257d6, #60a5fa);
+  --color-on-accent: light-dark(#ffffff, #0d0f12);
+  --color-photo: light-dark(#efede8, #d6d3cc);
   --font-sans: "Inter", "Inter Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: "Newsreader", "Newsreader Fallback", Georgia, "Times New Roman", serif;
   --font-mono: "JetBrains Mono", "JetBrains Mono Fallback", ui-monospace, "SFMono-Regular", Menlo, monospace;
 }
 
-/* Tema oscuro: sigue al sistema salvo que la persona elija uno con el botón
+/* Tema: sigue al sistema salvo que la persona elija uno con el botón
    (data-theme="light" | "dark" en <html>, guardado en localStorage). */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --color-page: #0d0f12;
-    --color-alt: #101318;
-    --color-tile: #14181f;
-    --color-card: #1a1f27;
-    --color-soft: #1f252e;
-    --color-soft-hover: #28303b;
-    --color-ink: #e8e6e1;
-    --color-sub: #9ca1a9;
-    --color-sub2: #c6c9ce;
-    --color-mute: #5a616b;
-    --color-hair: rgb(232 230 225 / 0.1);
-    --color-link: #60a5fa;
-    --color-accent: #60a5fa;
-    --color-on-accent: #0d0f12;
-    --color-cta: #14181f;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-    --color-page: #0d0f12;
-    --color-alt: #101318;
-    --color-tile: #14181f;
-    --color-card: #1a1f27;
-    --color-soft: #1f252e;
-    --color-soft-hover: #28303b;
-    --color-ink: #e8e6e1;
-    --color-sub: #9ca1a9;
-    --color-sub2: #c6c9ce;
-    --color-mute: #5a616b;
-    --color-hair: rgb(232 230 225 / 0.1);
-    --color-link: #60a5fa;
-    --color-accent: #60a5fa;
-    --color-on-accent: #0d0f12;
-    --color-cta: #14181f;
-    color-scheme: dark;
-}
+:root { color-scheme: light dark; }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
 
 /* Elementos que solo se muestran en un tema (íconos, capturas claro/oscuro). */
 .only-dark { display: none; }

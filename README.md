@@ -68,7 +68,7 @@ Cada texto va en los dos idiomas: `{ es: "...", en: "..." }`. Ningún componente
 ### Sistema visual
 
 - **Fuentes** (autoalojadas en `public/fonts/`, licencia OFL en `LICENSES.txt`): Newsreader para el nombre y los títulos, Inter para el cuerpo y JetBrains Mono para cifras, fechas y etiquetas de sección. Cada una tiene un respaldo con métricas ajustadas para que no haya saltos al cargar. La imagen Open Graph usa sus versiones `.woff` de `assets/og-fonts/`.
-- **Colores**: tokens en `app/globals.css` (`--color-page`, `--color-ink`, `--color-sub`, `--color-hair`, `--color-accent`…) para claro y oscuro. Fondo papel (#F8F7F4 / #0D0F12) y un solo acento cobalto: #2257D6 en claro y #60A5FA en oscuro, ambos con contraste AA sobre todas las superficies. `--color-mute` es solo decorativo (no para texto).
+- **Colores**: tokens en `app/globals.css` (`--color-page`, `--color-ink`, `--color-sub`, `--color-hair`, `--color-accent`…). Cada token define sus dos valores en un solo lugar con `light-dark(claro, oscuro)`. Fondo papel (#F8F7F4 / #0D0F12) y un solo acento cobalto: #2257D6 en claro y #60A5FA en oscuro, ambos con contraste AA sobre todas las superficies. `--color-mute` es solo decorativo (no para texto).
 - **Reglas**: títulos de sección en mono, mayúsculas pequeñas y sin punto final; separación con líneas (`border-t`) en vez de cajas; `rounded-full` solo para indicadores de estado ("En vivo", "Disponible"); botones y etiquetas con `rounded-md`. Las clases de botón (`btnPrimary`, `btnSecondary`) y de etiqueta (`label`) se exportan desde `components/Home.tsx`.
 
 ### Actualizar "Ahora"
