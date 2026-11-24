@@ -39,14 +39,14 @@ export function CaseToc({ title, items }: { title: string; items: { id: string; 
 
   return (
     <nav aria-label={title} className="sticky top-24">
-      <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-sub">{title}</p>
+      <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-sub">{title}</p>
       <ol className="mt-4 space-y-0.5 border-l border-hair">
         {items.map((it) => (
           <li key={it.id}>
             <a
               href={`#${it.id}`}
               aria-current={active === it.id ? "location" : undefined}
-              className="-ml-px block border-l-2 border-transparent py-1.5 pl-4 text-[14px] leading-snug text-sub transition-colors hover:text-ink aria-[current]:border-ink aria-[current]:font-medium aria-[current]:text-ink"
+              className="-ml-px block border-l-2 border-transparent py-1.5 pl-4 text-[14px] leading-snug text-sub transition-colors hover:text-ink aria-[current]:border-accent aria-[current]:font-medium aria-[current]:text-accent"
             >
               {it.label}
             </a>

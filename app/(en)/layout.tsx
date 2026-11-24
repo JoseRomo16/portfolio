@@ -3,8 +3,8 @@ import { RootHtml } from "@/components/RootHtml";
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+    { media: "(prefers-color-scheme: light)", color: "#f8f7f4" },
+    { media: "(prefers-color-scheme: dark)", color: "#0d0f12" },
   ],
   colorScheme: "light dark",
 };

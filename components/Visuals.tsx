@@ -9,6 +9,8 @@ import { SIZES, srcSet } from "@/lib/images";
 import { ChevronRight } from "./Icons";
 import { LightboxGroup, type LightboxItem, ZoomTrigger } from "./Lightbox";
 
+const C = CASE_UI.charts;
+
 /* ───────────── Marcos ───────────── */
 
 function Figure({ caption, l, children }: { caption: T; l: Lang; children: React.ReactNode }) {
@@ -44,14 +46,15 @@ function ThemedShot({ light, dark, alt, w, h, sizes, priority }: { light: string
   const cls = "block h-auto w-full";
   // La versión oscura siempre es lazy: oculta con display:none no se descarga hasta que se usa.
   return (
-    <div className="overflow-hidden rounded-2xl bg-tile ring-1 ring-hair">
+    <div className="overflow-hidden rounded-lg bg-tile ring-1 ring-hair">
       <Img src={light} alt={alt} w={w} h={h} sizes={sizes} className={`only-light ${cls}`} eager={priority} />
       <Img src={dark} alt={alt} w={w} h={h} sizes={sizes} className={`only-dark ${cls}`} />
     </div>
   );
 }
 
-export function VisualBlock({ v, l, priority = false }: { v: Visual; l: Lang; priority?: boolean }) {
+/** `bare`: los diagramas van sin caja, solo con un divisor arriba (inicio editorial). */
+export function VisualBlock({ v, l, priority = false, bare = false }: { v: Visual; l: Lang; priority?: boolean; bare?: boolean }) {
   // El visual principal ocupa todo el contenedor; los demás van en la columna de contenido.
   const single = priority ? SIZES.full : SIZES.column;
   const L = CASE_UI.lightbox;
@@ -90,7 +93,7 @@ export function VisualBlock({ v, l, priority = false }: { v: Visual; l: Lang; pr
         <Figure caption={v.caption} l={l}>
           <div className={v.narrow ? "max-w-[600px]" : ""}>
             <ZoomTrigger index={0} alt={v.alt[l]}>
-              <div className="overflow-hidden rounded-2xl bg-white p-3 ring-1 ring-hair sm:p-5">
+              <div className="overflow-hidden rounded-lg bg-white p-3 ring-1 ring-hair sm:p-5">
                 <Img
                   src={v.src}
                   alt={v.alt[l]}
@@ -123,7 +126,7 @@ export function VisualBlock({ v, l, priority = false }: { v: Visual; l: Lang; pr
             <div key={it.src} className={v.items.length % 2 === 1 && i === v.items.length - 1 ? "md:col-span-2 md:mx-auto md:w-1/2" : ""}>
               <Figure caption={it.caption} l={l}>
                 <ZoomTrigger index={i} alt={it.alt[l]}>
-                  <div className="overflow-hidden rounded-2xl bg-white p-3 ring-1 ring-hair">
+                  <div className="overflow-hidden rounded-lg bg-white p-3 ring-1 ring-hair">
                     <Img src={it.src} alt={it.alt[l]} w={it.w} h={it.h} sizes={SIZES.half} className="block h-auto w-full" />
                   </div>
                 </ZoomTrigger>
@@ -137,7 +140,7 @@ export function VisualBlock({ v, l, priority = false }: { v: Visual; l: Lang; pr
   const D = DIAGRAMS[v.name];
   return (
     <Figure caption={v.caption} l={l}>
-      <div className="rounded-2xl bg-tile p-5 ring-1 ring-hair sm:p-8">
+      <div className={bare ? "border-t border-hair pt-6" : "rounded-lg bg-tile p-5 ring-1 ring-hair sm:p-8"}>
         <D l={l} />
       </div>
     </Figure>
@@ -161,10 +164,10 @@ function AutoValorPipeline({ l }: { l: Lang }) {
       <ol className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((s, i) => (
           <li key={s.title.en} className="flex">
-            <div className="w-full rounded-xl bg-card p-4 ring-1 ring-hair">
+            <div className="w-full rounded-md bg-card p-4 ring-1 ring-hair">
               <p className="flex items-center gap-2 text-[15px] font-semibold">
                 {s.dot && <span className="size-2.5 rounded-full" style={{ background: s.dot }} aria-hidden />}
-                <span className="text-[12px] font-medium text-sub tabular-nums">{i + 1}</span>
+                <span className="font-mono text-[12px] font-medium text-sub">{i + 1}</span>
                 {s.title[l]}
               </p>
               <p className="mt-1.5 text-[13px] leading-snug text-sub">{s.body[l]}</p>
@@ -172,11 +175,7 @@ function AutoValorPipeline({ l }: { l: Lang }) {
           </li>
         ))}
       </ol>
-      <p className="mt-4 text-[13px] text-sub">
-        {l === "es"
-          ? "Todo corre en planes gratuitos: GitHub Actions para CI y Render para la API y el sitio."
-          : "Everything runs on free plans: GitHub Actions for CI and Render for the API and site."}
-      </p>
+      <p className="mt-4 text-[13px] text-sub">{C.autovalorNote[l]}</p>
     </div>
   );
 }
@@ -187,7 +186,7 @@ function Bar({ value, total, strong, label }: { value: number; total: number; st
   return (
     <div className="h-3 w-full overflow-hidden rounded-full bg-ink/[0.07]" role="img" aria-label={label}>
       <div
-        className={`h-full rounded-r-[4px] ${strong ? "bg-ink" : "bg-mute"}`}
+        className={`h-full rounded-r-[4px] ${strong ? "bg-accent" : "bg-mute"}`}
         style={{ width: `${(value / total) * 100}%` }}
         title={label}
       />
@@ -199,10 +198,10 @@ function Legend({ l }: { l: Lang }) {
   return (
     <ul className="flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-sub">
       <li className="flex items-center gap-2">
-        <span className="h-2.5 w-4 rounded-sm bg-mute" aria-hidden /> {l === "es" ? "V1, línea base" : "V1, baseline"}
+        <span className="h-2.5 w-4 rounded-sm bg-mute" aria-hidden /> {C.v1[l]}
       </li>
       <li className="flex items-center gap-2">
-        <span className="h-2.5 w-4 rounded-sm bg-ink" aria-hidden /> {l === "es" ? "V2, tras una iteración" : "V2, after one iteration"}
+        <span className="h-2.5 w-4 rounded-sm bg-accent" aria-hidden /> {C.v2[l]}
       </li>
     </ul>
   );
@@ -225,17 +224,13 @@ function BnplVersions({ l }: { l: Lang }) {
             {(["v1", "v2"] as const).map((k) => (
               <div key={k} className="grid grid-cols-[minmax(0,1fr)_3rem] items-center gap-4">
                 <Bar value={g[k]} total={g.total} strong={k === "v2"} label={`${k.toUpperCase()}: ${g[k]} / ${g.total}`} />
-                <span className="text-right text-[1.25rem] font-bold leading-none tracking-[-0.03em] tabular-nums">{g[k]}</span>
+                <span className="text-right font-mono text-[1.25rem] font-medium leading-none">{g[k]}</span>
               </div>
             ))}
           </div>
         </div>
       ))}
-      <p className="text-[14px] leading-snug text-sub">
-        {l === "es"
-          ? "V1 pasaba casi todos los checks sueltos y fallaba los que importan. Una respuesta puede ser fluida y ordenada y estar equivocada sobre el dinero de alguien."
-          : "V1 passed most individual checks while failing the ones that matter. An answer can be fluent and well organised and still be wrong about someone's money."}
-      </p>
+      <p className="text-[14px] leading-snug text-sub">{C.bnplVersionsNote[l]}</p>
     </div>
   );
 }
@@ -253,10 +248,10 @@ function BnplCategories({ l }: { l: Lang }) {
     <div className="space-y-6">
       <Legend l={l} />
       <table className="w-full border-collapse text-left">
-        <caption className="sr-only">{l === "es" ? "Casos superados por categoría, V1 y V2" : "Cases passed by category, V1 and V2"}</caption>
+        <caption className="sr-only">{C.byCategory[l]}</caption>
         <thead className="sr-only">
           <tr>
-            <th>{l === "es" ? "Categoría" : "Category"}</th>
+            <th>{C.category[l]}</th>
             <th>V1</th>
             <th>V2</th>
           </tr>
@@ -267,7 +262,7 @@ function BnplCategories({ l }: { l: Lang }) {
               <th scope="row" className="py-3 pr-4 align-top text-[14px] font-medium sm:w-[38%]">
                 {r.name[l]}
                 <span className="block text-[12px] font-normal text-sub">
-                  {r.n} {l === "es" ? (r.n === 1 ? "caso" : "casos") : r.n === 1 ? "case" : "cases"}
+                  {r.n} {(r.n === 1 ? C.case : C.cases)[l]}
                 </span>
               </th>
               <td className="py-3" colSpan={2}>
@@ -275,7 +270,7 @@ function BnplCategories({ l }: { l: Lang }) {
                   {(["v1", "v2"] as const).map((k) => (
                     <div key={k} className="grid grid-cols-[minmax(0,1fr)_2.75rem] items-center gap-3">
                       <Bar value={r[k]} total={r.n} strong={k === "v2"} label={`${r.name[l]} ${k.toUpperCase()}: ${r[k]} / ${r.n}`} />
-                      <span className="text-right text-[13px] text-sub2 tabular-nums">
+                      <span className="text-right font-mono text-[13px] text-sub2">
                         {r[k]}/{r.n}
                       </span>
                     </div>
@@ -308,20 +303,20 @@ function KmeansSilhouette({ l }: { l: Lang }) {
   const H = 180;
   return (
     <div>
-      <div className="flex h-[220px] items-end gap-1.5 sm:gap-3" role="img" aria-label={l === "es" ? "Barras del coeficiente de silueta para K de 2 a 10; el máximo, 0,55, está en K = 5." : "Bars of the silhouette score for K from 2 to 10; the maximum, 0.55, is at K = 5."}>
+      <div className="flex h-[220px] items-end gap-1.5 sm:gap-3" role="img" aria-label={C.silhouette[l]}>
         {data.map(([k, v]) => {
           const best = k === 5;
           return (
             <div key={k} className="flex flex-1 flex-col items-center justify-end gap-2" title={`K = ${k}: ${num(v, l, 3)}`}>
-              <span className={`text-[12px] tabular-nums ${best ? "font-semibold text-ink" : "text-sub"}`}>{num(v, l, 2)}</span>
-              <div className={`w-full max-w-[44px] rounded-t-[4px] ${best ? "bg-ink" : "bg-mute/60"}`} style={{ height: `${(v / max) * H}px` }} />
+              <span className={`font-mono text-[12px] ${best ? "font-semibold text-accent" : "text-sub"}`}>{num(v, l, 2)}</span>
+              <div className={`w-full max-w-[44px] rounded-t-[4px] ${best ? "bg-accent" : "bg-mute/60"}`} style={{ height: `${(v / max) * H}px` }} />
             </div>
           );
         })}
       </div>
       <div className="mt-2 flex gap-1.5 border-t border-hair pt-2 sm:gap-3" aria-hidden>
         {data.map(([k]) => (
-          <span key={k} className={`flex-1 text-center text-[12px] tabular-nums ${k === 5 ? "font-semibold text-ink" : "text-sub"}`}>
+          <span key={k} className={`flex-1 text-center font-mono text-[12px] ${k === 5 ? "font-semibold text-accent" : "text-sub"}`}>
             K={k}
           </span>
         ))}
@@ -351,10 +346,10 @@ function FinanceUniverse({ l }: { l: Lang }) {
   return (
     <div className="grid gap-8 lg:grid-cols-[1.1fr_1fr]">
       <div>
-        <p className="text-[13px] font-semibold text-sub">{l === "es" ? "9 activos" : "9 assets"}</p>
+        <p className="text-[13px] font-semibold text-sub">{C.financeAssets[l]}</p>
         <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
           {classes.map((c) => (
-            <li key={c.name.en} className="rounded-xl bg-card p-3.5 ring-1 ring-hair">
+            <li key={c.name.en} className="rounded-md bg-card p-3.5 ring-1 ring-hair">
               <p className="text-[12px] font-medium text-sub">{c.name[l]}</p>
               <p className="mt-1 text-[15px] font-semibold leading-snug">{c.items.join(", ")}</p>
             </li>
@@ -362,8 +357,8 @@ function FinanceUniverse({ l }: { l: Lang }) {
         </ul>
       </div>
       <div>
-        <p className="text-[13px] font-semibold text-sub">{l === "es" ? "5 métricas, el mismo cálculo para todos" : "5 metrics, the same calculation for all"}</p>
-        <dl className="mt-3 divide-y divide-hair rounded-xl bg-card ring-1 ring-hair">
+        <p className="text-[13px] font-semibold text-sub">{C.financeMetrics[l]}</p>
+        <dl className="mt-3 divide-y divide-hair rounded-md bg-card ring-1 ring-hair">
           {metrics.map((m) => (
             <div key={m.name.en} className="grid grid-cols-[7.5rem_1fr] gap-3 px-4 py-3 text-[14px]">
               <dt className="font-semibold">{m.name[l]}</dt>
@@ -379,22 +374,22 @@ function FinanceUniverse({ l }: { l: Lang }) {
 /* ───────────── Notes App: arquitectura ───────────── */
 
 function NotesArchitecture({ l }: { l: Lang }) {
-  const nodes: { name: string; tech: string; host: string; detail: T }[] = [
-    { name: "SPA", tech: "Next.js · export estático", host: "Vercel", detail: { es: "Pestañas, filtro por categoría, tema claro y oscuro.", en: "Tabs, category filter, light and dark theme." } },
-    { name: "REST API", tech: "NestJS · TypeORM", host: "Render", detail: { es: "Controlador → servicio → repositorio, por dominio.", en: "Controller → service → repository, per domain." } },
-    { name: "PostgreSQL 16", tech: "Migraciones + seed", host: "Supabase", detail: { es: "notes, categories y la tabla puente note_categories.", en: "notes, categories and the note_categories join table." } },
+  const nodes: { name: string; tech: T; host: string; detail: T }[] = [
+    { name: "SPA", tech: { es: "Next.js · export estático", en: "Next.js · static export" }, host: "Vercel", detail: { es: "Pestañas, filtro por categoría, tema claro y oscuro.", en: "Tabs, category filter, light and dark theme." } },
+    { name: "REST API", tech: { es: "NestJS · TypeORM", en: "NestJS · TypeORM" }, host: "Render", detail: { es: "Controlador → servicio → repositorio, por dominio.", en: "Controller → service → repository, per domain." } },
+    { name: "PostgreSQL 16", tech: { es: "Migraciones + seed", en: "Migrations + seed" }, host: "Supabase", detail: { es: "notes, categories y la tabla puente note_categories.", en: "notes, categories and the note_categories join table." } },
   ];
   return (
     <div>
       <ol className="grid gap-2 md:grid-cols-3 md:gap-0">
         {nodes.map((n, i) => (
           <li key={n.name} className="relative flex md:pr-6">
-            <div className="w-full rounded-xl bg-card p-5 ring-1 ring-hair">
+            <div className="w-full rounded-md bg-card p-5 ring-1 ring-hair">
               <div className="flex items-baseline justify-between gap-3">
                 <p className="text-[17px] font-semibold">{n.name}</p>
-                <span className="rounded-full bg-soft px-2 py-0.5 text-[12px] font-medium text-sub2">{n.host}</span>
+                <span className="rounded-md bg-soft px-2 py-0.5 font-mono text-[11px] font-medium text-sub2">{n.host}</span>
               </div>
-              <p className="mt-1 text-[13px] font-medium text-sub2">{l === "en" ? n.tech.replace("export estático", "static export").replace("Migraciones", "Migrations") : n.tech}</p>
+              <p className="mt-1 text-[13px] font-medium text-sub2">{n.tech[l]}</p>
               <p className="mt-2 text-[13px] leading-snug text-sub">{n.detail[l]}</p>
             </div>
             {i < nodes.length - 1 && (
@@ -405,11 +400,7 @@ function NotesArchitecture({ l }: { l: Lang }) {
           </li>
         ))}
       </ol>
-      <p className="mt-4 text-[13px] text-sub">
-        {l === "es"
-          ? "En local, docker compose levanta las tres piezas con ./start.sh."
-          : "Locally, docker compose starts all three with ./start.sh."}
-      </p>
+      <p className="mt-4 text-[13px] text-sub">{C.notesNote[l]}</p>
     </div>
   );
 }
@@ -426,19 +417,19 @@ const DIAGRAMS = {
 /** Mini gráfica de BNPL para la tarjeta del inicio. */
 export function BnplMini({ l }: { l: Lang }) {
   return (
-    <div className="rounded-2xl bg-card p-5 ring-1 ring-hair">
+    <div className="rounded-lg bg-card p-6 ring-1 ring-hair">
       <div className="flex items-baseline justify-between gap-3">
-        <span className="text-[13px] font-semibold">{l === "es" ? "Casos de evaluación superados" : "Evaluation cases passed"}</span>
-        <span className="text-[12px] text-sub tabular-nums">/ 15</span>
+        <span className="text-[13px] font-semibold">{C.passed[l]}</span>
+        <span className="font-mono text-[12px] text-sub">/ 15</span>
       </div>
       <div className="mt-4 space-y-3">
         {[
-          { k: "V1", v: 5, s: false, n: { es: "V1, línea base", en: "V1, baseline" } },
-          { k: "V2", v: 12, s: true, n: { es: "V2, tras una iteración", en: "V2, after one iteration" } },
+          { k: "V1", v: 5, s: false, n: C.v1 },
+          { k: "V2", v: 12, s: true, n: C.v2 },
         ].map((b) => (
           <div key={b.k} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1">
             <span className="text-[12px] text-sub">{tx(b.n, l)}</span>
-            <span className="row-span-2 self-end text-[1.5rem] font-bold leading-none tracking-[-0.04em] tabular-nums">{b.v}</span>
+            <span className="row-span-2 self-end font-mono text-[1.6rem] font-medium leading-none">{b.v}</span>
             <Bar value={b.v} total={15} strong={b.s} label={`${tx(b.n, l)}: ${b.v} / 15`} />
           </div>
         ))}

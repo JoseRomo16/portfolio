@@ -72,7 +72,7 @@ function useActiveSection(enabled: boolean) {
   return active;
 }
 
-const iconBtn = "grid size-8 place-items-center rounded-full text-sub2 transition-colors hover:bg-ink/[0.06] hover:text-ink";
+const iconBtn = "grid size-8 place-items-center rounded-md text-sub2 transition-colors hover:bg-ink/[0.06] hover:text-ink";
 
 export function SiteHeader({ l, altHref, onHome = false }: { l: Lang; altHref: string; onHome?: boolean }) {
   const href = (id: string) => (onHome ? `#${id}` : sectionPath(l, id));
@@ -124,7 +124,7 @@ export function SiteHeader({ l, altHref, onHome = false }: { l: Lang; altHref: s
                   <a
                     href={href(id)}
                     aria-current={active === id ? "true" : undefined}
-                    className="transition-colors hover:text-ink aria-[current]:font-medium aria-[current]:text-ink"
+                    className="transition-colors hover:text-ink aria-[current]:font-medium aria-[current]:text-accent"
                   >
                     {label[l]}
                   </a>
@@ -139,7 +139,7 @@ export function SiteHeader({ l, altHref, onHome = false }: { l: Lang; altHref: s
               onClick={remember}
               hrefLang={other}
               data-testid="lang-switch"
-              className="hidden rounded-full px-2.5 py-1 text-[12px] font-semibold text-sub2 transition-colors hover:bg-ink/[0.06] hover:text-ink md:inline-block"
+              className="hidden rounded-md px-2.5 py-1 font-mono text-[12px] font-medium text-sub2 transition-colors hover:bg-ink/[0.06] hover:text-ink md:inline-block"
             >
               <span aria-hidden>{UI.nav.langShort[l]}</span>
               <span className="sr-only">{UI.nav.langLabel[l]}</span>
@@ -147,7 +147,7 @@ export function SiteHeader({ l, altHref, onHome = false }: { l: Lang; altHref: s
             <ThemeToggle l={l} className={`${iconBtn} hidden md:grid`} />
             <a
               href={href("contact")}
-              className="ml-1 hidden rounded-full bg-ink px-3.5 py-1.5 text-[13px] font-medium text-page transition-opacity hover:opacity-80 md:inline-block"
+              className="ml-1 hidden rounded-md bg-accent px-3.5 py-1.5 text-[13px] font-medium text-on-accent transition-opacity hover:opacity-90 md:inline-block"
             >
               {UI.nav.contact[l]}
             </a>
@@ -173,7 +173,7 @@ export function SiteHeader({ l, altHref, onHome = false }: { l: Lang; altHref: s
                     href={href(id)}
                     onClick={() => setOpen(false)}
                     aria-current={active === id ? "true" : undefined}
-                    className="flex items-center justify-between py-3.5 text-[17px] font-medium text-sub2 aria-[current]:text-ink"
+                    className="flex items-center justify-between py-3.5 text-[17px] font-medium text-sub2 aria-[current]:text-accent"
                   >
                     {label[l]}
                     <ChevronRight c="size-4 text-mute" />
@@ -188,11 +188,11 @@ export function SiteHeader({ l, altHref, onHome = false }: { l: Lang; altHref: s
               onClick={remember}
               hrefLang={other}
               lang={other}
-              className="rounded-full bg-soft px-4 py-3 text-center text-ink transition-colors hover:bg-soft-hover"
+              className="rounded-md bg-soft px-4 py-3 text-center text-ink transition-colors hover:bg-soft-hover"
             >
               {UI.nav.langName[l]}
             </Link>
-            <ThemeToggle l={l} withLabel className="rounded-full bg-soft px-4 py-3 text-ink transition-colors hover:bg-soft-hover" />
+            <ThemeToggle l={l} withLabel className="rounded-md bg-soft px-4 py-3 text-ink transition-colors hover:bg-soft-hover" />
           </div>
         </div>
       </header>
@@ -252,7 +252,19 @@ export function LangSuggest({ l, altHref }: { l: Lang; altHref: string }) {
   );
 }
 
-export function CopyEmail({ email, label, done, track: trackAttrs }: { email: string; label: string; done: string; track?: Record<string, string> }) {
+export function CopyEmail({
+  email,
+  label,
+  done,
+  track: trackAttrs,
+  className = "text-sub underline-offset-4 hover:text-ink hover:underline",
+}: {
+  email: string;
+  label: string;
+  done: string;
+  track?: Record<string, string>;
+  className?: string;
+}) {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
     try {
@@ -265,7 +277,7 @@ export function CopyEmail({ email, label, done, track: trackAttrs }: { email: st
   };
   return (
     <>
-      <button type="button" onClick={copy} {...trackAttrs} className="text-white/60 underline-offset-4 hover:text-white hover:underline">
+      <button type="button" onClick={copy} {...trackAttrs} className={className}>
         {copied ? done : label}
       </button>
       <span className="sr-only" aria-live="polite">

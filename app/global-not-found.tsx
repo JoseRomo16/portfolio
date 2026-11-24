@@ -29,35 +29,35 @@ const HEAD_SCRIPT = [
 
 function View({ l }: { l: Lang }) {
   const T = NOT_FOUND;
-  const btn = "inline-flex items-center rounded-full px-6 py-3 text-[15px] font-medium transition-opacity hover:opacity-80";
+  const btn = "inline-flex items-center rounded-md px-5 py-3 text-[15px] font-medium transition-opacity hover:opacity-90";
   return (
     <>
       <main className={`${container} pt-32 pb-24 md:pt-40`}>
-        <p className="text-[14px] font-semibold text-sub tabular-nums">{T.code[l]}</p>
-        <h1 className="mt-3 max-w-[40rem] text-[2.75rem] font-bold leading-[1.02] tracking-[-0.04em] sm:text-[4rem]">{T.title[l]}</h1>
+        <p className="font-mono text-[12px] font-medium uppercase tracking-[0.14em] text-sub">{T.code[l]}</p>
+        <h1 className="mt-4 max-w-[40rem] font-display text-[3rem] font-medium leading-[1.02] tracking-[-0.02em] sm:text-[4.5rem]">{T.title[l]}</h1>
         <p className="mt-6 max-w-[36rem] text-lg leading-relaxed text-sub">{T.body[l]}</p>
         <div className="mt-10 flex flex-wrap gap-3">
-          <a href={homePath(l)} className={`${btn} bg-ink text-page`}>
+          <a href={homePath(l)} className={`${btn} bg-accent text-on-accent`}>
             {T.home[l]}
           </a>
-          <a href={sectionPath(l, "contact")} className={`${btn} bg-soft text-ink`}>
+          <a href={sectionPath(l, "contact")} className={`${btn} text-ink ring-1 ring-hair`}>
             {T.contact[l]}
           </a>
         </div>
 
         <section aria-labelledby={`cases-${l}`} className="mt-20">
-          <h2 id={`cases-${l}`} className="text-[1.375rem] font-bold tracking-[-0.025em]">
+          <h2 id={`cases-${l}`} className="border-t border-hair pt-5 font-mono text-[12px] font-medium uppercase tracking-[0.14em] text-sub">
             {T.cases[l]}
           </h2>
-          <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-4 grid gap-x-10 sm:grid-cols-2">
             {PROJECTS.map((p) => (
               <li key={p.slug}>
                 <a
                   href={projectPath(l, p.slug)}
-                  className="group flex h-full flex-col rounded-2xl bg-tile p-5 ring-1 ring-hair transition-shadow hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]"
+                  className="group flex h-full flex-col border-b border-hair py-5"
                 >
-                  <span className="text-[13px] font-semibold text-sub">{p.tag[l]}</span>
-                  <span className="mt-1 flex items-center justify-between gap-3 text-[17px] font-semibold tracking-[-0.015em]">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-sub">{p.tag[l]}</span>
+                  <span className="mt-1.5 flex items-center justify-between gap-3 font-display text-[1.5rem] font-medium group-hover:underline group-hover:decoration-1 group-hover:underline-offset-4">
                     {tx(p.name, l)}
                     <ChevronRight c="size-4 shrink-0 text-mute transition-transform motion-safe:group-hover:translate-x-0.5" />
                   </span>
@@ -92,10 +92,10 @@ export default function GlobalNotFound() {
             <div className="flex items-center gap-1.5">
               <NotFoundLangToggle />
               <div className="only-es">
-                <ThemeToggle l="es" className="grid size-8 place-items-center rounded-full text-sub2 transition-colors hover:bg-ink/[0.06] hover:text-ink" />
+                <ThemeToggle l="es" className="grid size-8 place-items-center rounded-md text-sub2 transition-colors hover:bg-ink/[0.06] hover:text-ink" />
               </div>
               <div className="only-en">
-                <ThemeToggle l="en" className="grid size-8 place-items-center rounded-full text-sub2 transition-colors hover:bg-ink/[0.06] hover:text-ink" />
+                <ThemeToggle l="en" className="grid size-8 place-items-center rounded-md text-sub2 transition-colors hover:bg-ink/[0.06] hover:text-ink" />
               </div>
             </div>
           </div>

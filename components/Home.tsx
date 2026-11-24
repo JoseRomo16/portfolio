@@ -2,44 +2,48 @@ import Link from "next/link";
 import { CERTS, DEGREES, EXPERIENCE, HERO, LINKS, NOW, SECTIONS, SKILLS, STATS, UI } from "@/lib/content";
 import { container } from "@/lib/ui";
 import { type Lang, homePath, projectPath, tx } from "@/lib/i18n";
-import { CASE_UI, EXTRA_PROJECTS, PROJECTS, getProject } from "@/lib/projects";
+import { CASE_UI, EXTRA_PROJECTS, type Project, getProject } from "@/lib/projects";
 import { CopyEmail, CvLink, LangSuggest, SiteHeader } from "./Chrome";
 import { type UmamiProps, umamiEvent } from "@/lib/analytics";
 import { ArrowUpRight, ChevronRight, Download, GitHub, LinkedIn, Mail, WhatsApp } from "./Icons";
-import { BnplMini, Img } from "./Visuals";
+import { Img, VisualBlock } from "./Visuals";
 import { SIZES } from "@/lib/images";
 
-export const tile =
-  "rounded-3xl bg-tile ring-1 ring-hair transition-[transform,box-shadow] duration-300 ease-out motion-safe:hover:scale-[1.01] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]";
+/* ───────────────────────────── Sistema ─────────────────────────────
+   - Títulos de sección: etiqueta pequeña en mono, mayúsculas y espaciada. El tamaño grande lo llevan
+     el nombre y los títulos de proyecto (Newsreader).
+   - Sin cajas en las secciones informativas: espacio y divisores (border-t).
+   - Píldoras (rounded-full) solo para estados ("Disponible", "En vivo", "En curso").
+     Botones y etiquetas técnicas: rounded-md.
+   - Acento cobalto solo en el CTA principal, enlaces, estados activos y cifras clave. */
 
-export function SectionHeader({ id, title, lead, aside }: { id: string; title: string; lead?: string; aside?: React.ReactNode }) {
+export const label = "font-mono text-[12px] font-medium uppercase tracking-[0.14em] text-sub";
+export const btnPrimary =
+  "inline-flex items-center justify-center gap-2 rounded-md bg-accent px-5 py-3 text-[15px] font-medium text-on-accent transition-opacity hover:opacity-90";
+/**
+ * Celda de cifra (<div> con <dt> etiqueta + <dd> valor dentro de un <dl>). En el DOM la etiqueta va
+ * primero, así el lector de pantalla la anuncia una sola vez y antes del valor; con `order` el valor se
+ * ve arriba. Los hijos usan order-1 (valor) y order-2 (etiqueta).
+ */
+export const metricCell = "flex flex-col";
+export const btnSecondary =
+  "inline-flex items-center justify-center gap-2 rounded-md px-5 py-3 text-[15px] font-medium text-ink ring-1 ring-hair transition-colors hover:bg-ink/[0.05]";
+
+/** Etiqueta de sección con su divisor. `as="p"` cuando el título real de la sección es otro. */
+export function SectionLabel({ id, children, aside, as = "h2" }: { id?: string; children: React.ReactNode; aside?: React.ReactNode; as?: "h2" | "h3" | "p" }) {
+  const H = as;
   return (
-    <header className="mb-12 flex flex-wrap items-end justify-between gap-x-8 gap-y-3 md:mb-16">
-      <div className="max-w-[42rem]">
-        <h2 id={id} className="text-[2.5rem] font-bold leading-[1.05] tracking-[-0.03em] md:text-[3.5rem]">
-          {title}
-        </h2>
-        {lead && <p className="mt-4 text-xl leading-snug tracking-[-0.01em] text-sub md:text-2xl">{lead}</p>}
-      </div>
+    <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-t border-hair pt-5">
+      <H id={id} className={label}>
+        {children}
+      </H>
       {aside}
-    </header>
-  );
-}
-
-export function Chips({ items, l }: { items: (string | { es: string; en: string })[]; l: Lang }) {
-  return (
-    <ul className="flex flex-wrap gap-1.5">
-      {items.map((it) => (
-        <li key={tx(it, "en")} className="rounded-full bg-card px-2.5 py-1 text-[13px] font-medium text-sub2 ring-1 ring-hair">
-          {tx(it, l)}
-        </li>
-      ))}
-    </ul>
+    </div>
   );
 }
 
 export function TextLink({ href, children, external = true, track }: { href: string; children: React.ReactNode; external?: boolean; track?: Record<string, string> }) {
-  const cls = "relative z-10 inline-flex items-center gap-1 text-[15px] font-medium text-link hover:underline hover:underline-offset-4";
+  const cls = "relative z-10 inline-flex items-center gap-1 text-[15px] font-medium text-link underline-offset-4 hover:underline";
   return external ? (
     <a href={href} target="_blank" rel="noreferrer" className={cls} {...track}>
       {children}
@@ -53,94 +57,97 @@ export function TextLink({ href, children, external = true, track }: { href: str
   );
 }
 
-const Tag = ({ children }: { children: React.ReactNode }) => <p className="text-[13px] font-semibold text-sub">{children}</p>;
-
-/** Título del proyecto que además convierte toda la tarjeta en enlace al caso de estudio. */
-function CardTitle({ href, children, size = "md" }: { href: string; children: React.ReactNode; size?: "lg" | "md" }) {
+/** Indicador de estado. Es el único elemento con forma de píldora. */
+function Status({ children }: { children: React.ReactNode }) {
   return (
-    <h3 className={`mt-2 font-bold ${size === "lg" ? "text-[2rem] leading-tight tracking-[-0.03em] md:text-[2.5rem]" : "text-[1.5rem] tracking-[-0.03em]"}`}>
-      <Link href={href} className="after:absolute after:inset-0 after:rounded-3xl after:content-[''] focus-visible:outline-none focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-link">
-        {children}
-      </Link>
-    </h3>
+    <span className="inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-[12px] font-medium text-sub2 ring-1 ring-hair">
+      <span className="size-1.5 rounded-full bg-accent" aria-hidden />
+      {children}
+    </span>
   );
 }
 
-function CardLinks({ l, slug, repo, demo }: { l: Lang; slug: string; repo: string; demo?: string }) {
-  const ctx = { page: "home", project: slug } as const;
+/** Enlaces de un proyecto: caso de estudio, demo y código. */
+function ProjectLinks({ l, p, primary = false }: { l: Lang; p: Project; primary?: boolean }) {
+  const ctx = { page: "home", project: p.slug } as const;
   return (
-    <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-      <span className="inline-flex items-center gap-1 text-[15px] font-semibold text-ink">
-        {CASE_UI.caseStudy[l]} <ChevronRight c="size-3.5" />
-      </span>
-      {demo && (
-        <TextLink href={demo} track={umamiEvent("demo-open", ctx)}>
+    <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+      {primary ? (
+        <Link href={projectPath(l, p.slug)} className={btnSecondary}>
+          {CASE_UI.caseStudy[l]} <ChevronRight c="size-3.5" />
+        </Link>
+      ) : (
+        <TextLink href={projectPath(l, p.slug)} external={false}>
+          {CASE_UI.caseStudy[l]}
+        </TextLink>
+      )}
+      {p.links.demo && (
+        <TextLink href={p.links.demo} track={umamiEvent("demo-open", ctx)}>
           {CASE_UI.demo[l]}
         </TextLink>
       )}
-      <TextLink href={repo} track={umamiEvent("repo-open", ctx)}>
+      <TextLink href={p.links.repo} track={umamiEvent("repo-open", ctx)}>
         {CASE_UI.code[l]}
       </TextLink>
     </div>
   );
 }
 
-/* ───────────────────────────── Secciones ───────────────────────────── */
+/* ───────────────────────────── Inicio ───────────────────────────── */
 
 function Hero({ l }: { l: Lang }) {
-  const auto: Record<string, string> = {
-    projects: String(PROJECTS.length + EXTRA_PROJECTS.length),
-    certs: String(CERTS.length + 1), // +1 = EF SET (inglés)
-  };
   return (
-    <section aria-labelledby="hero-title" className={`${container} pt-32 pb-16 md:pt-44 md:pb-20`}>
-      <div className="grid items-end gap-12 lg:grid-cols-12 lg:gap-8">
-        <div className="lg:col-span-7">
-          <p className="inline-flex items-center gap-2 rounded-full bg-soft px-3 py-1.5 text-[13px] font-medium text-sub2">
-            <span className="size-2 rounded-full bg-[#30d158]" aria-hidden />
-            {HERO.status[l]}
-          </p>
-          <h1 id="hero-title" className="mt-7 text-[3.25rem] font-bold leading-[0.95] tracking-[-0.035em] sm:text-7xl lg:text-[5.5rem]">
+    <section aria-labelledby="hero-title" className={`${container} pt-28 pb-14 md:pt-40 md:pb-16`}>
+      <div className="grid items-end gap-12 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-16">
+        <div>
+          <div className="flex items-center gap-4">
+            {/* En móvil la foto va en miniatura junto al estado, para que las cifras queden más arriba. */}
+            <div className="relative size-14 shrink-0 overflow-hidden rounded-md bg-photo ring-1 ring-hair lg:hidden">
+              <img src="/img/jose-romo.webp" alt={HERO.photoAlt[l]} width={433} height={576} className="absolute inset-x-0 bottom-0 h-[95%] w-full object-cover object-top mix-blend-multiply" />
+            </div>
+            <div className="flex flex-col items-start gap-1.5">
+              <Status>{HERO.status[l]}</Status>
+              <p className="pl-1 font-mono text-[12px] text-sub lg:hidden">{HERO.location[l]} · UTC−5</p>
+            </div>
+          </div>
+          <h1 id="hero-title" className="mt-8 font-display text-[3.5rem] font-medium leading-[0.95] tracking-[-0.02em] sm:text-[5rem] lg:text-[6.25rem]">
             Jose Luis
             <br />
             Romo Melo
           </h1>
-          <p className="mt-6 max-w-[34rem] text-[1.75rem] font-semibold leading-[1.15] tracking-[-0.025em] text-sub sm:text-[2.1rem]">{HERO.title[l]}</p>
-          <p className="mt-6 max-w-[36rem] text-lg leading-relaxed text-sub">{HERO.body[l]}</p>
-          <div className="mt-10 flex flex-wrap items-center gap-3">
-            <a href="#contact" className="rounded-full bg-ink px-6 py-3 text-[15px] font-medium text-page transition-opacity hover:opacity-80">
+          <p className="mt-8 max-w-[40rem] text-[1.3rem] font-medium leading-snug tracking-[-0.01em] sm:text-[1.55rem]">{HERO.title[l]}</p>
+          <p className="mt-5 max-w-[38rem] text-[17px] leading-relaxed text-sub">{HERO.body[l]}</p>
+          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <a href="#contact" className={btnPrimary}>
               {HERO.contact[l]}
             </a>
-            <a href="#projects" className="rounded-full bg-soft px-6 py-3 text-[15px] font-medium text-ink transition-colors hover:bg-soft-hover">
-              {HERO.projects[l]}
+            <a href="#projects" className="inline-flex items-center gap-1 text-[15px] font-medium text-ink underline-offset-4 hover:underline">
+              {HERO.projects[l]} <ChevronRight c="size-3.5" />
             </a>
-            <CvLink href={LINKS.cv[l]} page="home" className="inline-flex items-center gap-1.5 rounded-full px-4 py-3 text-[15px] font-medium text-link hover:underline hover:underline-offset-4">
+            <CvLink href={LINKS.cv[l]} page="home" className="inline-flex items-center gap-1.5 text-[15px] font-medium text-link underline-offset-4 hover:underline">
               <Download /> {HERO.cv[l]}
             </CvLink>
           </div>
         </div>
-        <figure className="lg:col-span-5">
-          {/* La foto original mide 433 px de ancho: por encima de ~360 px se ve borrosa en pantallas retina. */}
-          <div className="relative mx-auto aspect-[4/5] w-full max-w-[300px] overflow-hidden rounded-[2rem] bg-zinc-100 ring-1 ring-hair sm:max-w-[340px] lg:ml-auto lg:max-w-[380px]">
-            {/* mix-blend-multiply funde el fondo blanco de la foto con el gris del contenedor */}
-            <img src="/img/jose-romo.webp" alt={HERO.photoAlt[l]} width={433} height={576} className="absolute inset-x-0 bottom-0 h-[94%] w-full object-cover object-top mix-blend-multiply" />
-            <figcaption className="absolute inset-x-3 bottom-3 flex items-center justify-between rounded-2xl bg-white/70 px-4 py-3 text-[13px] backdrop-blur-xl">
-              <span className="font-semibold text-black">{HERO.location[l]}</span>
-              <span className="text-[#6e6e73]">UTC−5</span>
-            </figcaption>
+        <figure className="hidden lg:block">
+          {/* La foto tiene fondo blanco: mix-blend-multiply lo funde con el marco (--color-photo). El marco
+              es claro en ambos temas para que la foto no se oscurezca; en oscuro es un tono más bajo. */}
+          <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-photo ring-1 ring-hair">
+            <img src="/img/jose-romo.webp" alt={HERO.photoAlt[l]} width={433} height={576} className="absolute inset-x-0 bottom-0 h-[95%] w-full object-cover object-top mix-blend-multiply" />
           </div>
+          <figcaption className="mt-3 flex justify-between font-mono text-[12px] text-sub">
+            <span>{HERO.location[l]}</span>
+            <span>UTC−5</span>
+          </figcaption>
         </figure>
       </div>
-      <dl className="mt-16 grid grid-cols-2 gap-3 md:mt-20 md:gap-4 lg:grid-cols-4">
+
+      <dl className="mt-12 grid border-t border-hair sm:grid-cols-3 lg:mt-16">
         {STATS.map((s) => (
-          <div key={s.key} className="rounded-3xl bg-tile px-6 py-6 ring-1 ring-hair">
-            <dt className="sr-only">{s.label[l]}</dt>
-            <dd>
-              <span className="block whitespace-nowrap text-[1.75rem] font-bold leading-none tracking-[-0.04em] tabular-nums sm:text-[2rem] md:text-[2.5rem]">
-                {auto[s.key] ?? s.value[l]}
-              </span>
-              <span className="mt-2 block text-[14px] leading-snug text-sub">{s.label[l]}</span>
-            </dd>
+          <div key={s.key} className={`${metricCell} border-hair py-6 sm:border-l sm:px-6 sm:first:border-l-0 sm:first:pl-0 max-sm:border-b max-sm:last:border-b-0`}>
+            <dt className="order-2 mt-3 text-[15px] leading-snug text-sub2">{s.label[l]}</dt>
+            <dd className="order-1 whitespace-nowrap font-mono text-[2rem] font-medium leading-none tracking-[-0.02em] text-accent md:text-[2.4rem]">{s.value[l]}</dd>
+            <dd className="order-3 mt-1 font-mono text-[12px] text-sub">{s.source[l]}</dd>
           </div>
         ))}
       </dl>
@@ -148,195 +155,136 @@ function Hero({ l }: { l: Lang }) {
   );
 }
 
+/** Franja de estado compacta, tipo changelog. */
 function Now({ l }: { l: Lang }) {
   return (
-    <section aria-labelledby="now" className={`${container} pb-24 md:pb-32`}>
-      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-t border-hair pt-10">
-        <h2 id="now" className="text-[1.75rem] font-bold tracking-[-0.03em]">
-          {NOW.title[l]}
-        </h2>
-        <p className="text-[13px] text-sub">{NOW.updated[l]}</p>
+    <section aria-labelledby="now" className={container}>
+      <div className="grid gap-x-8 gap-y-4 border-y border-hair py-5 md:grid-cols-[7rem_repeat(4,minmax(0,1fr))] md:items-baseline">
+        <div className="flex items-baseline gap-3 md:block">
+          <h2 id="now" className={label}>
+            {NOW.title[l]}
+          </h2>
+          <p className="font-mono text-[12px] text-sub md:mt-1">{NOW.updated[l]}</p>
+        </div>
+        {NOW.items.map((it) => (
+          <div key={it.kind.en} className="grid grid-cols-[7rem_1fr] items-baseline gap-3 md:block">
+            <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-sub">{it.kind[l]}</p>
+            {it.href ? (
+              <Link href={projectPath(l, it.href)} className="text-[15px] font-medium text-link underline-offset-4 hover:underline md:mt-1 md:inline-block">
+                {it.title[l]}
+              </Link>
+            ) : (
+              <p className="text-[15px] font-medium md:mt-1">{it.title[l]}</p>
+            )}
+          </div>
+        ))}
       </div>
-      <ul className="mt-6 grid gap-4 md:grid-cols-3">
-        {NOW.items.map((it) => {
-          const inner = (
-            <>
-              <p className="flex items-center gap-2 text-[13px] font-semibold text-sub">
-                <span className="size-1.5 rounded-full bg-link" aria-hidden />
-                {it.kind[l]}
-              </p>
-              <p className="mt-2 text-[19px] font-bold tracking-[-0.02em]">{it.title[l]}</p>
-              <p className="mt-2 text-[15px] leading-relaxed text-sub">{it.body[l]}</p>
-            </>
-          );
-          return (
-            <li key={it.title.en}>
-              {"href" in it && it.href ? (
-                <Link href={projectPath(l, it.href)} className={`${tile} block h-full p-6`}>
-                  {inner}
-                  <span className="mt-4 inline-flex items-center gap-1 text-[14px] font-medium text-link">
-                    {CASE_UI.caseStudy[l]} <ChevronRight c="size-3.5" />
-                  </span>
-                </Link>
-              ) : (
-                <div className="h-full rounded-3xl bg-tile p-6 ring-1 ring-hair">{inner}</div>
-              )}
-            </li>
-          );
-        })}
-      </ul>
     </section>
+  );
+}
+
+/** Proyecto insignia: bloque editorial de dos columnas, texto y cifras a un lado, visual al otro. */
+function Flagship({ l, p, visual, reverse = false, live = false, first = false }: { l: Lang; p: Project; visual: React.ReactNode; reverse?: boolean; live?: boolean; first?: boolean }) {
+  return (
+    <article className={`grid gap-10 py-14 lg:grid-cols-2 lg:items-center lg:gap-16 lg:py-20 ${first ? "" : "border-t border-hair"}`}>
+      <div className={reverse ? "lg:order-2" : ""}>
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="font-mono text-[12px] uppercase tracking-[0.12em] text-sub">{p.tag[l]}</p>
+          {live && <Status>{CASE_UI.live[l]}</Status>}
+        </div>
+        <h3 className="mt-4 font-display text-[2.5rem] font-medium leading-[1.02] tracking-[-0.015em] md:text-[3.25rem]">
+          <Link href={projectPath(l, p.slug)} className="underline-offset-[6px] hover:underline hover:decoration-1">
+            {tx(p.name, l)}
+          </Link>
+        </h3>
+        <p className="mt-4 max-w-[34rem] text-[17px] leading-relaxed text-sub">{p.lede[l]}</p>
+        <dl className="mt-8 max-w-[34rem]">
+          {p.metrics.slice(0, 3).map((m) => (
+            <div key={m.label.en} className="grid grid-cols-[6.5rem_1fr] items-baseline gap-4 border-t border-hair py-3 last:border-b">
+              {/* Etiqueta primero en el DOM (se anuncia una vez); la grilla pone el valor a la izquierda. */}
+              <dt className="col-start-2 row-start-1 text-[14px] leading-snug text-sub2">{m.label[l]}</dt>
+              <dd className="col-start-1 row-start-1 whitespace-nowrap font-mono text-[1.25rem] font-medium text-accent">{m.value[l]}</dd>
+            </div>
+          ))}
+        </dl>
+        <div className="mt-8">
+          <ProjectLinks l={l} p={p} primary />
+        </div>
+      </div>
+      <div className={reverse ? "lg:order-1" : ""}>{visual}</div>
+    </article>
   );
 }
 
 function Projects({ l }: { l: Lang }) {
   const av = getProject("autovalor-co")!;
   const bn = getProject("bnpl-support-assistant")!;
-  const notes = getProject("notes-app")!;
-  const km = getProject("customer-segmentation")!;
-  const fin = getProject("financial-assets")!;
+  const more = ["notes-app", "customer-segmentation", "financial-assets"].map((s) => getProject(s)!);
   return (
-    <section aria-labelledby="projects" className="bg-alt py-24 md:py-32">
-      <div className={container}>
-        <SectionHeader id="projects" title={SECTIONS.projects.title[l]} lead={SECTIONS.projects.lead[l]} />
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6">
-          {/* AutoValor — destacada */}
-          <article className={`${tile} relative flex flex-col gap-8 overflow-hidden p-8 md:col-span-2 lg:col-span-4 lg:row-span-2 md:p-10`}>
-            <div>
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <Tag>{av.tag[l]}</Tag>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-card px-2.5 py-1 text-[12px] font-semibold ring-1 ring-hair">
-                  <span className="size-1.5 rounded-full bg-[#30d158]" aria-hidden />
-                  {CASE_UI.live[l]}
-                </span>
+    <section aria-labelledby="projects" className={`${container} pt-24 md:pt-32`}>
+      <SectionLabel id="projects" aside={<p className="max-w-[30rem] text-[15px] text-sub">{SECTIONS.projects.lead[l]}</p>}>
+        {SECTIONS.projects.title[l]}
+      </SectionLabel>
+
+      <Flagship
+        l={l}
+        p={av}
+        live
+        first
+        visual={
+          <div className="overflow-hidden rounded-lg ring-1 ring-hair">
+            <Img src="/img/projects/autovalor-valorar-claro.webp" alt={av.hero.kind === "shots" ? av.hero.items[0].alt[l] : ""} w={1440} h={900} sizes={SIZES.cardWide} className="only-light block h-auto w-full" />
+            <Img src="/img/projects/autovalor-valorar-oscuro.webp" alt={av.hero.kind === "shots" ? av.hero.items[0].alt[l] : ""} w={1440} h={900} sizes={SIZES.cardWide} className="only-dark block h-auto w-full" />
+          </div>
+        }
+      />
+      <Flagship l={l} p={bn} reverse visual={<VisualBlock v={bn.hero} l={l} bare />} />
+
+      <div className="mt-6">
+        <SectionLabel as="h3">{SECTIONS.projects.more[l]}</SectionLabel>
+        <ul>
+          {more.map((p) => (
+            <li key={p.slug} className="grid gap-x-10 gap-y-3 border-b border-hair py-8 md:grid-cols-[minmax(0,15rem)_minmax(0,1fr)_auto]">
+              <div>
+                <h4 className="font-display text-[1.65rem] font-medium leading-tight tracking-[-0.01em]">
+                  <Link href={projectPath(l, p.slug)} className="underline-offset-4 hover:underline hover:decoration-1">
+                    {tx(p.name, l)}
+                  </Link>
+                </h4>
+                <p className="mt-1 font-mono text-[12px] uppercase tracking-[0.1em] text-sub">{p.tag[l]}</p>
               </div>
-              <CardTitle href={projectPath(l, av.slug)} size="lg">
-                {tx(av.name, l)}
-              </CardTitle>
-              <p className="mt-3 max-w-[34rem] text-[17px] leading-relaxed text-sub">{av.lede[l]}</p>
-            </div>
-            <dl className="grid gap-3 sm:grid-cols-3">
-              {av.metrics.slice(0, 3).map((m) => (
-                <div key={m.label.en} className="rounded-2xl bg-card p-4 ring-1 ring-hair">
-                  <dt className="sr-only">{m.label[l]}</dt>
-                  <dd>
-                    <span className="block whitespace-nowrap text-[1.5rem] font-bold leading-none tracking-[-0.04em] tabular-nums md:text-[1.9rem]">{m.value[l]}</span>
-                    <span className="mt-2 block text-[12px] leading-snug text-sub md:text-[13px]">{m.label[l]}</span>
-                  </dd>
-                </div>
-              ))}
-            </dl>
-            <div className="overflow-hidden rounded-xl ring-1 ring-hair">
-              <Img src="/img/projects/autovalor-valorar-claro.webp" alt="" w={1440} h={900} sizes={SIZES.cardWide} className="only-light block h-auto w-full" />
-              <Img src="/img/projects/autovalor-valorar-oscuro.webp" alt="" w={1440} h={900} sizes={SIZES.cardWide} className="only-dark block h-auto w-full" />
-            </div>
-            <div className="mt-auto flex flex-col gap-5">
-              <Chips items={av.stack.slice(0, 7)} l={l} />
-              <CardLinks l={l} slug={av.slug} repo={av.links.repo} demo={av.links.demo} />
-            </div>
-          </article>
-
-          {/* BNPL */}
-          <article className={`${tile} relative flex flex-col gap-8 p-8 lg:col-span-2 lg:row-span-2`}>
-            <div>
-              <Tag>{bn.tag[l]}</Tag>
-              <CardTitle href={projectPath(l, bn.slug)}>{tx(bn.name, l)}</CardTitle>
-              <p className="mt-3 text-[15px] leading-relaxed text-sub">{bn.lede[l]}</p>
-            </div>
-            <BnplMini l={l} />
-            <ul className="space-y-2 text-[15px] text-sub2">
-              {[
-                { es: "RAG con BM25 y citas a la sección exacta", en: "RAG with BM25 and citations to the exact section" },
-                { es: "Verificación de identidad en código", en: "Identity verification enforced in code" },
-                { es: "Arnés propio: 15 casos, 52 checks", en: "Custom harness: 15 cases, 52 checks" },
-              ].map((p) => (
-                <li key={p.en} className="flex gap-2.5">
-                  <span className="mt-[9px] size-1 shrink-0 rounded-full bg-mute" aria-hidden />
-                  {p[l]}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-auto flex flex-col gap-5">
-              <Chips items={bn.stack.slice(0, 5)} l={l} />
-              <CardLinks l={l} slug={bn.slug} repo={bn.links.repo} />
-            </div>
-          </article>
-
-          {/* Notes App */}
-          <article className={`${tile} relative flex flex-col p-8 lg:col-span-2`}>
-            <div className="flex items-center justify-between">
-              <Tag>{notes.tag[l]}</Tag>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-card px-2.5 py-1 text-[12px] font-semibold ring-1 ring-hair">
-                <span className="size-1.5 rounded-full bg-[#30d158]" aria-hidden />
-                {CASE_UI.live[l]}
-              </span>
-            </div>
-            <CardTitle href={projectPath(l, notes.slug)}>{tx(notes.name, l)}</CardTitle>
-            <p className="mt-3 text-[15px] leading-relaxed text-sub">{notes.lede[l]}</p>
-            <div className="mt-6 overflow-hidden rounded-xl ring-1 ring-hair">
-              <Img src="/img/projects/notes-claro.webp" alt="" w={1920} h={1200} sizes={SIZES.cardThird} className="only-light block h-auto w-full" />
-              <Img src="/img/projects/notes-oscuro.webp" alt="" w={1920} h={1200} sizes={SIZES.cardThird} className="only-dark block h-auto w-full" />
-            </div>
-            <div className="mt-auto flex flex-col gap-5 pt-6">
-              <Chips items={["NestJS", "PostgreSQL", "Next.js", "Docker"]} l={l} />
-              <CardLinks l={l} slug={notes.slug} repo={notes.links.repo} demo={notes.links.demo} />
-            </div>
-          </article>
-
-          {/* K-means */}
-          <article className={`${tile} relative flex flex-col p-8 lg:col-span-2`}>
-            <Tag>{km.tag[l]}</Tag>
-            <CardTitle href={projectPath(l, km.slug)}>{tx(km.name, l)}</CardTitle>
-            <p className="mt-3 text-[15px] leading-relaxed text-sub">{km.lede[l]}</p>
-            <div className="mt-6 overflow-hidden rounded-xl bg-white ring-1 ring-hair">
-              <img src="/img/kmeans.webp" alt="" width={1100} height={724} loading="lazy" className="block w-full" />
-            </div>
-            <div className="mt-auto flex flex-col gap-5 pt-6">
-              <Chips items={["scikit-learn", "pandas", "seaborn"]} l={l} />
-              <CardLinks l={l} slug={km.slug} repo={km.links.repo} />
-            </div>
-          </article>
-
-          {/* Finanzas */}
-          <article className={`${tile} relative flex flex-col p-8 lg:col-span-2`}>
-            <Tag>{fin.tag[l]}</Tag>
-            <CardTitle href={projectPath(l, fin.slug)}>{tx(fin.name, l)}</CardTitle>
-            <p className="mt-3 text-[15px] leading-relaxed text-sub">{fin.lede[l]}</p>
-            <ul className="mt-6 grid grid-cols-2 gap-2">
-              {["Sharpe", "VaR 95 %", "Drawdown", l === "es" ? "Volatilidad" : "Volatility"].map((m) => (
-                <li key={m} className="rounded-xl bg-card px-3 py-2.5 text-[14px] font-semibold ring-1 ring-hair">
-                  {m}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-auto flex flex-col gap-5 pt-6">
-              <Chips items={["pandas", "yfinance", "Plotly", "pytest"]} l={l} />
-              <CardLinks l={l} slug={fin.slug} repo={fin.links.repo} />
-            </div>
-          </article>
-
-          {/* Proyectos extra, sin caso de estudio */}
-          {EXTRA_PROJECTS.map((m) => (
-            <article key={m.repo} className={`${tile} flex flex-col p-8 lg:col-span-2`}>
-              <Tag>{m.tag[l]}</Tag>
-              <h3 className="mt-2 text-[1.5rem] font-bold tracking-[-0.03em]">{tx(m.name, l)}</h3>
-              <p className="mt-3 text-[15px] leading-relaxed text-sub">{m.body[l]}</p>
-              <div className="mt-auto flex flex-col gap-5 pt-6">
-                <Chips items={m.stack} l={l} />
-                <div className="flex flex-wrap gap-x-5 gap-y-2">
-                  {m.demo && (
-                    <TextLink href={m.demo} track={umamiEvent("demo-open", { page: "home", project: tx(m.name, "en") })}>
-                      {CASE_UI.demo[l]}
-                    </TextLink>
-                  )}
-                  <TextLink href={m.repo} track={umamiEvent("repo-open", { page: "home", project: tx(m.name, "en") })}>
-                    {CASE_UI.code[l]}
-                  </TextLink>
-                </div>
+              <div className="max-w-[36rem]">
+                <p className="text-[16px] leading-relaxed text-sub2">{p.lede[l]}</p>
+                <p className="mt-2 text-[14px] text-sub">{p.stack.slice(0, 5).join(", ")}</p>
               </div>
-            </article>
+              <div className="flex flex-wrap gap-x-5 gap-y-2 md:flex-col md:items-start">
+                <ProjectLinks l={l} p={p} />
+              </div>
+            </li>
           ))}
-        </div>
+          {EXTRA_PROJECTS.map((m) => (
+            <li key={m.repo} className="grid gap-x-10 gap-y-3 border-b border-hair py-8 md:grid-cols-[minmax(0,15rem)_minmax(0,1fr)_auto]">
+              <div>
+                <h4 className="font-display text-[1.65rem] font-medium leading-tight">{tx(m.name, l)}</h4>
+                <p className="mt-1 font-mono text-[12px] uppercase tracking-[0.1em] text-sub">{m.tag[l]}</p>
+              </div>
+              <div className="max-w-[36rem]">
+                <p className="text-[16px] leading-relaxed text-sub2">{m.body[l]}</p>
+                <p className="mt-2 text-[14px] text-sub">{m.stack.join(", ")}</p>
+              </div>
+              <div className="flex flex-wrap gap-x-5 gap-y-2 md:flex-col">
+                {m.demo && (
+                  <TextLink href={m.demo} track={umamiEvent("demo-open", { page: "home", project: tx(m.name, "en") })}>
+                    {CASE_UI.demo[l]}
+                  </TextLink>
+                )}
+                <TextLink href={m.repo} track={umamiEvent("repo-open", { page: "home", project: tx(m.name, "en") })}>
+                  {CASE_UI.code[l]}
+                </TextLink>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
@@ -344,114 +292,134 @@ function Projects({ l }: { l: Lang }) {
 
 function Experience({ l }: { l: Lang }) {
   return (
-    <section aria-labelledby="experience" className="py-24 md:py-32">
-      <div className={container}>
-        <SectionHeader id="experience" title={SECTIONS.experience.title[l]} lead={SECTIONS.experience.lead[l]} />
-        <div className="space-y-4">
-          {EXPERIENCE.map((job) => (
-            <article key={job.org} className="rounded-3xl bg-tile p-8 ring-1 ring-hair md:p-10">
-              <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-hair pb-6">
-                <h3 className="text-[1.375rem] font-bold tracking-[-0.025em]">{job.org}</h3>
+    <section aria-labelledby="experience" className={`${container} pt-24 md:pt-32`}>
+      <SectionLabel id="experience">{SECTIONS.experience.title[l]}</SectionLabel>
+      <ol>
+        {EXPERIENCE.map((job) => {
+          // Periodo total en la organización: inicio del primer cargo y fin del más reciente.
+          const start = job.roles[job.roles.length - 1].period[l].split(" — ")[0];
+          const end = job.roles[0].period[l].split(" — ").at(-1);
+          return (
+            <li key={job.org} className="grid gap-x-12 gap-y-6 border-b border-hair py-10 lg:grid-cols-[16rem_minmax(0,1fr)]">
+              <div>
+                <p className="font-mono text-[13px] text-sub2">
+                  {start} — {end}
+                </p>
+                <p className="mt-2 text-[16px] font-semibold">{job.org}</p>
                 <p className="text-[14px] text-sub">{job.meta[l]}</p>
-              </header>
-              <ol className="divide-y divide-hair">
-                {job.roles.map((r) => (
-                  <li key={r.title.en} className="grid gap-4 py-7 last:pb-0 md:grid-cols-[13rem_1fr] md:gap-10">
-                    <p className="text-[14px] font-medium text-sub tabular-nums">{r.period[l]}</p>
-                    <div>
-                      <h4 className="text-[17px] font-semibold tracking-[-0.015em]">{r.title[l]}</h4>
-                      <ul className="mt-3 max-w-[44rem] space-y-2.5 text-[15px] leading-relaxed text-sub">
+                {job.note && <p className="mt-3 max-w-[15rem] text-[13px] leading-snug text-sub">{job.note[l]}</p>}
+              </div>
+              <div className="max-w-[44rem]">
+                <ol>
+                  {job.roles.map((r) => (
+                    <li key={r.title.en} className="border-t border-hair pt-6 pb-8 first:border-t-0 first:pt-0 last:pb-0">
+                      <h3 className="text-[19px] font-semibold leading-snug tracking-[-0.01em]">{r.title[l]}</h3>
+                      {job.roles.length > 1 && <p className="mt-1 font-mono text-[12px] text-sub">{r.period[l]}</p>}
+                      <ul className="mt-4 space-y-2.5 text-[16px] leading-relaxed text-sub2">
                         {r.points.map((p) => (
                           <li key={p.en} className="flex gap-3">
-                            <span className="mt-[10px] size-1 shrink-0 rounded-full bg-mute" aria-hidden />
+                            <span className="mt-[11px] h-px w-3 shrink-0 bg-mute" aria-hidden />
                             {p[l]}
                           </li>
                         ))}
                       </ul>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-              <div className="mt-7 md:pl-[15.5rem]">
-                <Chips items={job.tags} l={l} />
+                    </li>
+                  ))}
+                </ol>
+                <p className="mt-6 text-[14px] leading-relaxed text-sub">
+                  <span className="mr-2 font-mono text-[11px] uppercase tracking-[0.12em]">{SECTIONS.experience.stack[l]}</span>
+                  {job.stack[l]}
+                </p>
               </div>
-            </article>
-          ))}
-        </div>
-      </div>
+            </li>
+          );
+        })}
+      </ol>
     </section>
   );
 }
 
 function Skills({ l }: { l: Lang }) {
+  const S = SECTIONS.skills;
   return (
-    <section aria-labelledby="skills" className="bg-alt py-24 md:py-32">
-      <div className={container}>
-        <SectionHeader id="skills" title={SECTIONS.skills.title[l]} lead={SECTIONS.skills.lead[l]} />
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {SKILLS.map((g) => (
-            <article key={g.key} className={`flex flex-col rounded-3xl bg-tile p-7 ring-1 ring-hair ${g.span}`}>
-              <h3 className="text-[19px] font-bold tracking-[-0.02em]">{g.name[l]}</h3>
-              <p className="mt-3 text-[15px] leading-relaxed text-sub">{g.items.map((i) => tx(i, l)).join(", ")}</p>
-              {g.learn && (
-                <div className="mt-auto pt-6">
-                  <p className="text-[13px] font-semibold text-link">{SECTIONS.skills.learning[l]}</p>
-                  <p className="mt-1 text-[15px] text-sub">{g.learn.map((i) => tx(i, l)).join(", ")}</p>
-                </div>
-              )}
-            </article>
-          ))}
-        </div>
+    <section aria-labelledby="skills" className={`${container} pt-24 md:pt-32`}>
+      <SectionLabel id="skills">{S.title[l]}</SectionLabel>
+      {/* Lista de definiciones (dominio → stack): se lee igual en todos los lectores de pantalla y en
+          móvil se apila sin cambiar el display de una tabla. Los encabezados de columna son visuales. */}
+      <div aria-hidden className="mt-6 hidden grid-cols-[18rem_minmax(0,1fr)] pb-3 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-sub md:grid">
+        <span>{S.domain[l]}</span>
+        <span>{S.stack[l]}</span>
       </div>
+      <dl className="max-md:mt-6">
+        {SKILLS.map((s) => (
+          <div key={s.key} className="grid gap-y-1.5 border-t border-hair py-5 md:grid-cols-[18rem_minmax(0,1fr)] md:items-baseline">
+            <dt className="pr-8 text-[17px] font-semibold">{s.domain[l]}</dt>
+            <dd className="text-[16px] leading-relaxed text-sub2">{s.stack[l]}</dd>
+          </div>
+        ))}
+      </dl>
     </section>
   );
 }
 
 function Education({ l }: { l: Lang }) {
   const E = SECTIONS.education;
+  const featured = CERTS.filter((c) => c.featured);
+  const rest = CERTS.filter((c) => !c.featured);
+  const certRow = (c: (typeof CERTS)[number]) => (
+    <li key={tx(c.name, "en")} className="flex items-baseline justify-between gap-6 border-t border-hair py-3.5">
+      <span className="text-[15px] leading-snug">
+        <span className="font-medium">{tx(c.name, l)}</span>
+        <span className="text-sub"> · {c.org}</span>
+      </span>
+      {c.date[l] && <span className="shrink-0 font-mono text-[12px] text-sub">{c.date[l]}</span>}
+    </li>
+  );
   return (
-    <section aria-labelledby="education" className="py-24 md:py-32">
-      <div className={container}>
-        <SectionHeader id="education" title={E.title[l]} lead={E.lead[l]} />
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {DEGREES.map((d) => (
-            <article key={d.org} className="flex min-h-[13rem] flex-col rounded-3xl bg-tile p-7 ring-1 ring-hair">
-              {d.current ? (
-                <span className="self-start rounded-full bg-ink px-2.5 py-1 text-[12px] font-semibold text-page">{E.current[l]}</span>
-              ) : (
-                <span className="text-[13px] font-medium text-sub tabular-nums">{d.period[l]}</span>
-              )}
-              <h3 className="mt-auto pt-8 text-[1.375rem] font-bold leading-tight tracking-[-0.025em]">{d.name[l]}</h3>
-              <p className="mt-1.5 text-[15px] text-sub">
-                {d.org}
-                {d.current && <span className="tabular-nums">, {d.period[l]}</span>}
-              </p>
-            </article>
-          ))}
-          <article className="rounded-3xl bg-tile p-7 ring-1 ring-hair md:col-span-2 md:p-8">
-            <h3 className="text-[19px] font-bold tracking-[-0.02em]">{E.certsTitle[l]}</h3>
-            <ul className="mt-4 grid gap-x-8 lg:grid-cols-2">
-              {CERTS.map((c) => (
-                <li key={tx(c.name, "en")} className="flex items-baseline justify-between gap-4 border-b border-hair py-3">
-                  <span className="text-[15px] leading-snug">
-                    <span className="font-medium">{tx(c.name, l)}</span>
-                    <span className="block text-[13px] text-sub">{c.org}</span>
-                  </span>
-                  {c.date[l] && <span className="shrink-0 text-[13px] text-sub tabular-nums">{c.date[l]}</span>}
-                </li>
-              ))}
-            </ul>
-          </article>
-          <article className="flex flex-col rounded-3xl bg-tile p-7 ring-1 ring-hair md:p-8">
-            <h3 className="text-[19px] font-bold tracking-[-0.02em]">{E.english[l]}</h3>
-            <p className="mt-auto pt-8 text-[4.5rem] font-bold leading-none tracking-[-0.05em]">C1</p>
-            <p className="mt-2 text-[15px] text-sub">{E.englishBody[l]}</p>
-            <p className="mt-1 text-[15px] text-sub">{E.spanish[l]}</p>
-            <div className="mt-5">
-              <TextLink href={LINKS.efset}>{E.verify[l]}</TextLink>
-            </div>
-          </article>
+    <section aria-labelledby="education" className={`${container} pt-24 md:pt-32`}>
+      <SectionLabel id="education">{E.title[l]}</SectionLabel>
+      <div className="mt-10 grid gap-14 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-20">
+        <div>
+          <h3 className={label}>{E.degrees[l]}</h3>
+          <ul className="mt-4">
+            {DEGREES.map((d) => (
+              <li key={d.org} className="grid gap-x-6 gap-y-1 border-t border-hair py-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-baseline">
+                <div>
+                  <p className="font-display text-[1.6rem] font-medium leading-tight tracking-[-0.01em]">{d.name[l]}</p>
+                  <p className="mt-1 text-[15px] text-sub">{d.org}</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  {d.current && <Status>{E.current[l]}</Status>}
+                  <span className="font-mono text-[13px] text-sub2">{d.period[l]}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <h3 className={`${label} mt-14`}>{E.certsTitle[l]}</h3>
+          <ul className="mt-4">{featured.map(certRow)}</ul>
+          {rest.length > 0 && (
+            <details className="group border-t border-hair">
+              <summary className="flex cursor-pointer items-center gap-2 py-3.5 text-[15px] font-medium text-link underline-offset-4 hover:underline">
+                <ChevronRight c="rotate-on-open size-3.5 transition-transform" />
+                {E.moreCerts[l].replace("{n}", String(rest.length))}
+              </summary>
+              <ul>{rest.map(certRow)}</ul>
+            </details>
+          )}
         </div>
+
+        <aside aria-labelledby="english" className="border-t border-hair pt-5 lg:self-start">
+          <h3 id="english" className={label}>
+            {E.english[l]}
+          </h3>
+          <p className="mt-6 font-display text-[5.5rem] font-medium leading-none tracking-[-0.02em]">C1</p>
+          <p className="mt-4 font-mono text-[13px] text-sub2">{E.englishBody[l]}</p>
+          <p className="mt-1 text-[15px] text-sub">{E.spanish[l]}</p>
+          <div className="mt-5">
+            <TextLink href={LINKS.efset}>{E.verify[l]}</TextLink>
+          </div>
+        </aside>
       </div>
     </section>
   );
@@ -460,32 +428,46 @@ function Education({ l }: { l: Lang }) {
 export function Contact({ l, headingLevel = "h2", title, body, page = "home" }: { l: Lang; headingLevel?: "h2" | "h3"; title?: string; body?: string; page?: UmamiProps["page"] }) {
   const K = SECTIONS.contact;
   const H = headingLevel;
-  const btn = "inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-[15px] font-medium transition-colors";
+  const link = "inline-flex items-center gap-1.5 text-[15px] font-medium text-ink underline-offset-4 hover:underline";
   return (
-    <section aria-labelledby="contact" className={`${container} pb-6`}>
-      <div className="rounded-[2.5rem] bg-cta px-6 py-20 text-white ring-1 ring-hair sm:px-12 md:px-16 md:py-28">
-        <H id="contact" className="max-w-[44rem] text-[2.5rem] font-bold leading-[1.02] tracking-[-0.04em] md:text-[4rem]">
-          {title ?? K.title[l]}
-        </H>
-        <p className="mt-6 max-w-[36rem] text-lg leading-relaxed text-white/60">{body ?? K.body[l]}</p>
-        <div className="mt-12 flex flex-wrap gap-3">
-          <a href={`mailto:${LINKS.email}`} className={`${btn} bg-white text-black hover:bg-white/85`}>
-            <Mail /> {K.email[l]}
-          </a>
-          <a href={LINKS.linkedin} target="_blank" rel="noreferrer" className={`${btn} bg-white/10 text-white hover:bg-white/20`} {...umamiEvent("linkedin-open", { page })}>
-            <LinkedIn /> LinkedIn
-          </a>
-          <a href={LINKS.github} target="_blank" rel="noreferrer" className={`${btn} bg-white/10 text-white hover:bg-white/20`}>
-            <GitHub /> GitHub
-          </a>
-          <a href={LINKS.whatsapp} target="_blank" rel="noreferrer" className={`${btn} bg-white/10 text-white hover:bg-white/20`} {...umamiEvent("whatsapp-open", { page })}>
-            <WhatsApp /> WhatsApp
-          </a>
+    <section aria-labelledby="contact" className={`${container} pt-24 pb-10 md:pt-32`}>
+      <SectionLabel as="p">{K.label[l]}</SectionLabel>
+      <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div>
+          <H id="contact" className="font-display text-[3rem] font-medium leading-[1] tracking-[-0.02em] md:text-[4.5rem]">
+            {title ?? K.title[l]}
+          </H>
+          <p className="mt-6 max-w-[36rem] text-[17px] leading-relaxed text-sub">{body ?? K.body[l]}</p>
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <a href={`mailto:${LINKS.email}`} className={btnPrimary}>
+              <Mail /> {K.write[l]}
+            </a>
+            <CopyEmail email={LINKS.email} label={K.copy[l]} done={K.copied[l]} track={umamiEvent("email-copy", { page })} className={btnSecondary} />
+          </div>
+          <p className="mt-4 break-all font-mono text-[13px] text-sub">{LINKS.email}</p>
         </div>
-        <div className="mt-14 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-white/15 pt-8 text-[15px]">
-          <span className="break-all font-medium">{LINKS.email}</span>
-          <CopyEmail email={LINKS.email} label={K.copy[l]} done={K.copied[l]} track={umamiEvent("email-copy", { page })} />
-        </div>
+        <ul className="flex flex-wrap gap-x-6 gap-y-3 lg:flex-col lg:items-start lg:gap-y-3">
+          <li>
+            <a href={LINKS.linkedin} target="_blank" rel="noreferrer" className={link} {...umamiEvent("linkedin-open", { page })}>
+              <LinkedIn c="size-4" /> LinkedIn
+            </a>
+          </li>
+          <li>
+            <a href={LINKS.github} target="_blank" rel="noreferrer" className={link}>
+              <GitHub c="size-4" /> GitHub
+            </a>
+          </li>
+          <li>
+            <a href={LINKS.whatsapp} target="_blank" rel="noreferrer" className={link} {...umamiEvent("whatsapp-open", { page })}>
+              <WhatsApp c="size-4" /> WhatsApp
+            </a>
+          </li>
+          <li>
+            <CvLink href={LINKS.cv[l]} page={page} className={link}>
+              <Download /> {K.cv[l]}
+            </CvLink>
+          </li>
+        </ul>
       </div>
     </section>
   );
@@ -494,7 +476,7 @@ export function Contact({ l, headingLevel = "h2", title, body, page = "home" }: 
 export function Footer({ l, page = "home" }: { l: Lang; page?: UmamiProps["page"] }) {
   const link = "transition-colors hover:text-ink";
   return (
-    <footer className={`${container} flex flex-col gap-4 py-8 text-[13px] text-sub sm:flex-row sm:items-center sm:justify-between`}>
+    <footer className={`${container} mt-10 flex flex-col gap-4 border-t border-hair py-8 text-[13px] text-sub sm:flex-row sm:items-center sm:justify-between`}>
       <div className="flex flex-col gap-1">
         <span>© {new Date().getFullYear()} Jose Luis Romo Melo</span>
         <span>{UI.footer[l]}</span>
@@ -514,7 +496,7 @@ export function SkipLink({ l, target }: { l: Lang; target: string }) {
   return (
     <a
       href={target}
-      className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-[4.25rem] focus-visible:z-[60] focus-visible:rounded-full focus-visible:bg-ink focus-visible:px-4 focus-visible:py-2 focus-visible:text-[14px] focus-visible:font-medium focus-visible:text-page focus-visible:shadow-lg"
+      className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-[4.25rem] focus-visible:z-[60] focus-visible:rounded-md focus-visible:bg-ink focus-visible:px-4 focus-visible:py-2 focus-visible:text-[14px] focus-visible:font-medium focus-visible:text-page focus-visible:shadow-lg"
     >
       {UI.nav.skip[l]}
     </a>
