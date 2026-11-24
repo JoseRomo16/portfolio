@@ -20,6 +20,12 @@ import { SIZES } from "@/lib/images";
 export const label = "font-mono text-[12px] font-medium uppercase tracking-[0.14em] text-sub";
 export const btnPrimary =
   "inline-flex items-center justify-center gap-2 rounded-md bg-accent px-5 py-3 text-[15px] font-medium text-on-accent transition-opacity hover:opacity-90";
+/**
+ * Celda de cifra (<div> con <dt> etiqueta + <dd> valor dentro de un <dl>). En el DOM la etiqueta va
+ * primero, así el lector de pantalla la anuncia una sola vez y antes del valor; con `order` el valor se
+ * ve arriba. Los hijos usan order-1 (valor) y order-2 (etiqueta).
+ */
+export const metricCell = "flex flex-col";
 export const btnSecondary =
   "inline-flex items-center justify-center gap-2 rounded-md px-5 py-3 text-[15px] font-medium text-ink ring-1 ring-hair transition-colors hover:bg-ink/[0.05]";
 
@@ -94,7 +100,16 @@ function Hero({ l }: { l: Lang }) {
     <section aria-labelledby="hero-title" className={`${container} pt-28 pb-14 md:pt-40 md:pb-16`}>
       <div className="grid items-end gap-12 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-16">
         <div>
-          <Status>{HERO.status[l]}</Status>
+          <div className="flex items-center gap-4">
+            {/* En móvil la foto va en miniatura junto al estado, para que las cifras queden más arriba. */}
+            <div className="relative size-14 shrink-0 overflow-hidden rounded-md bg-photo ring-1 ring-hair lg:hidden">
+              <img src="/img/jose-romo.webp" alt={HERO.photoAlt[l]} width={433} height={576} className="absolute inset-x-0 bottom-0 h-[95%] w-full object-cover object-top mix-blend-multiply" />
+            </div>
+            <div className="flex flex-col items-start gap-1.5">
+              <Status>{HERO.status[l]}</Status>
+              <p className="pl-1 font-mono text-[12px] text-sub lg:hidden">{HERO.location[l]} · UTC−5</p>
+            </div>
+          </div>
           <h1 id="hero-title" className="mt-8 font-display text-[3.5rem] font-medium leading-[0.95] tracking-[-0.02em] sm:text-[5rem] lg:text-[6.25rem]">
             Jose Luis
             <br />
@@ -114,10 +129,10 @@ function Hero({ l }: { l: Lang }) {
             </CvLink>
           </div>
         </div>
-        <figure className="mx-auto w-full max-w-[16rem] lg:mx-0 lg:max-w-none">
-          {/* La foto tiene fondo blanco: mix-blend-multiply lo funde con el papel. El marco es claro en
-              ambos temas para que la foto no se oscurezca. */}
-          <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-[#efede8] ring-1 ring-hair">
+        <figure className="hidden lg:block">
+          {/* La foto tiene fondo blanco: mix-blend-multiply lo funde con el marco (--color-photo). El marco
+              es claro en ambos temas para que la foto no se oscurezca; en oscuro es un tono más bajo. */}
+          <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-photo ring-1 ring-hair">
             <img src="/img/jose-romo.webp" alt={HERO.photoAlt[l]} width={433} height={576} className="absolute inset-x-0 bottom-0 h-[95%] w-full object-cover object-top mix-blend-multiply" />
           </div>
           <figcaption className="mt-3 flex justify-between font-mono text-[12px] text-sub">
@@ -127,15 +142,12 @@ function Hero({ l }: { l: Lang }) {
         </figure>
       </div>
 
-      <dl className="mt-16 grid border-t border-hair sm:grid-cols-3">
+      <dl className="mt-12 grid border-t border-hair sm:grid-cols-3 lg:mt-16">
         {STATS.map((s) => (
-          <div key={s.key} className="border-hair py-6 sm:border-l sm:px-6 sm:first:border-l-0 sm:first:pl-0 max-sm:border-b max-sm:last:border-b-0">
-            <dt className="sr-only">{s.label[l]}</dt>
-            <dd>
-              <span className="block whitespace-nowrap font-mono text-[2rem] font-medium leading-none tracking-[-0.02em] text-accent md:text-[2.4rem]">{s.value[l]}</span>
-              <span className="mt-3 block text-[15px] leading-snug text-sub2">{s.label[l]}</span>
-              <span className="mt-1 block font-mono text-[12px] text-sub">{s.source[l]}</span>
-            </dd>
+          <div key={s.key} className={`${metricCell} border-hair py-6 sm:border-l sm:px-6 sm:first:border-l-0 sm:first:pl-0 max-sm:border-b max-sm:last:border-b-0`}>
+            <dt className="order-2 mt-3 text-[15px] leading-snug text-sub2">{s.label[l]}</dt>
+            <dd className="order-1 whitespace-nowrap font-mono text-[2rem] font-medium leading-none tracking-[-0.02em] text-accent md:text-[2.4rem]">{s.value[l]}</dd>
+            <dd className="order-3 mt-1 font-mono text-[12px] text-sub">{s.source[l]}</dd>
           </div>
         ))}
       </dl>
@@ -189,11 +201,9 @@ function Flagship({ l, p, visual, reverse = false, live = false, first = false }
         <dl className="mt-8 max-w-[34rem]">
           {p.metrics.slice(0, 3).map((m) => (
             <div key={m.label.en} className="grid grid-cols-[6.5rem_1fr] items-baseline gap-4 border-t border-hair py-3 last:border-b">
-              <dt className="sr-only">{m.label[l]}</dt>
-              <dd className="contents">
-                <span className="whitespace-nowrap font-mono text-[1.25rem] font-medium text-accent">{m.value[l]}</span>
-                <span className="text-[14px] leading-snug text-sub2">{m.label[l]}</span>
-              </dd>
+              {/* Etiqueta primero en el DOM (se anuncia una vez); la grilla pone el valor a la izquierda. */}
+              <dt className="col-start-2 row-start-1 text-[14px] leading-snug text-sub2">{m.label[l]}</dt>
+              <dd className="col-start-1 row-start-1 whitespace-nowrap font-mono text-[1.25rem] font-medium text-accent">{m.value[l]}</dd>
             </div>
           ))}
         </dl>
@@ -228,7 +238,7 @@ function Projects({ l }: { l: Lang }) {
           </div>
         }
       />
-      <Flagship l={l} p={bn} reverse visual={<VisualBlock v={bn.hero} l={l} />} />
+      <Flagship l={l} p={bn} reverse visual={<VisualBlock v={bn.hero} l={l} bare />} />
 
       <div className="mt-6">
         <SectionLabel as="h3">{SECTIONS.projects.more[l]}</SectionLabel>
@@ -285,38 +295,45 @@ function Experience({ l }: { l: Lang }) {
     <section aria-labelledby="experience" className={`${container} pt-24 md:pt-32`}>
       <SectionLabel id="experience">{SECTIONS.experience.title[l]}</SectionLabel>
       <ol>
-        {EXPERIENCE.flatMap((job) =>
-          job.roles.map((r, i) => {
-            const last = i === job.roles.length - 1;
-            return (
-              <li key={r.title.en} className="grid gap-x-12 gap-y-4 border-b border-hair py-10 lg:grid-cols-[16rem_minmax(0,1fr)]">
-                <div>
-                  <p className="font-mono text-[13px] text-sub2">{r.period[l]}</p>
-                  <p className="mt-2 text-[16px] font-semibold">{job.org}</p>
-                  <p className="text-[14px] text-sub">{job.meta[l]}</p>
-                  {job.note && <p className="mt-3 max-w-[15rem] text-[13px] leading-snug text-sub">{job.note[l]}</p>}
-                </div>
-                <div className="max-w-[44rem]">
-                  <h3 className="text-[19px] font-semibold leading-snug tracking-[-0.01em]">{r.title[l]}</h3>
-                  <ul className="mt-4 space-y-2.5 text-[16px] leading-relaxed text-sub2">
-                    {r.points.map((p) => (
-                      <li key={p.en} className="flex gap-3">
-                        <span className="mt-[11px] h-px w-3 shrink-0 bg-mute" aria-hidden />
-                        {p[l]}
-                      </li>
-                    ))}
-                  </ul>
-                  {last && (
-                    <p className="mt-5 text-[14px] leading-relaxed text-sub">
-                      <span className="mr-2 font-mono text-[11px] uppercase tracking-[0.12em]">{SECTIONS.experience.stack[l]}</span>
-                      {job.stack[l]}
-                    </p>
-                  )}
-                </div>
-              </li>
-            );
-          }),
-        )}
+        {EXPERIENCE.map((job) => {
+          // Periodo total en la organización: inicio del primer cargo y fin del más reciente.
+          const start = job.roles[job.roles.length - 1].period[l].split(" — ")[0];
+          const end = job.roles[0].period[l].split(" — ").at(-1);
+          return (
+            <li key={job.org} className="grid gap-x-12 gap-y-6 border-b border-hair py-10 lg:grid-cols-[16rem_minmax(0,1fr)]">
+              <div>
+                <p className="font-mono text-[13px] text-sub2">
+                  {start} — {end}
+                </p>
+                <p className="mt-2 text-[16px] font-semibold">{job.org}</p>
+                <p className="text-[14px] text-sub">{job.meta[l]}</p>
+                {job.note && <p className="mt-3 max-w-[15rem] text-[13px] leading-snug text-sub">{job.note[l]}</p>}
+              </div>
+              <div className="max-w-[44rem]">
+                <ol>
+                  {job.roles.map((r) => (
+                    <li key={r.title.en} className="border-t border-hair pt-6 pb-8 first:border-t-0 first:pt-0 last:pb-0">
+                      <h3 className="text-[19px] font-semibold leading-snug tracking-[-0.01em]">{r.title[l]}</h3>
+                      {job.roles.length > 1 && <p className="mt-1 font-mono text-[12px] text-sub">{r.period[l]}</p>}
+                      <ul className="mt-4 space-y-2.5 text-[16px] leading-relaxed text-sub2">
+                        {r.points.map((p) => (
+                          <li key={p.en} className="flex gap-3">
+                            <span className="mt-[11px] h-px w-3 shrink-0 bg-mute" aria-hidden />
+                            {p[l]}
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  ))}
+                </ol>
+                <p className="mt-6 text-[14px] leading-relaxed text-sub">
+                  <span className="mr-2 font-mono text-[11px] uppercase tracking-[0.12em]">{SECTIONS.experience.stack[l]}</span>
+                  {job.stack[l]}
+                </p>
+              </div>
+            </li>
+          );
+        })}
       </ol>
     </section>
   );
@@ -327,28 +344,20 @@ function Skills({ l }: { l: Lang }) {
   return (
     <section aria-labelledby="skills" className={`${container} pt-24 md:pt-32`}>
       <SectionLabel id="skills">{S.title[l]}</SectionLabel>
-      <table className="mt-6 w-full border-collapse text-left">
-        <thead className="max-md:sr-only">
-          <tr>
-            <th scope="col" className="w-[18rem] pb-3 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-sub">
-              {S.domain[l]}
-            </th>
-            <th scope="col" className="pb-3 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-sub">
-              {S.stack[l]}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {SKILLS.map((s) => (
-            <tr key={s.key} className="border-t border-hair max-md:block max-md:py-5">
-              <th scope="row" className="py-5 pr-8 align-baseline text-[17px] font-semibold max-md:block max-md:p-0">
-                {s.domain[l]}
-              </th>
-              <td className="py-5 align-baseline text-[16px] leading-relaxed text-sub2 max-md:mt-1.5 max-md:block max-md:p-0">{s.stack[l]}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {/* Lista de definiciones (dominio → stack): se lee igual en todos los lectores de pantalla y en
+          móvil se apila sin cambiar el display de una tabla. Los encabezados de columna son visuales. */}
+      <div aria-hidden className="mt-6 hidden grid-cols-[18rem_minmax(0,1fr)] pb-3 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-sub md:grid">
+        <span>{S.domain[l]}</span>
+        <span>{S.stack[l]}</span>
+      </div>
+      <dl className="max-md:mt-6">
+        {SKILLS.map((s) => (
+          <div key={s.key} className="grid gap-y-1.5 border-t border-hair py-5 md:grid-cols-[18rem_minmax(0,1fr)] md:items-baseline">
+            <dt className="pr-8 text-[17px] font-semibold">{s.domain[l]}</dt>
+            <dd className="text-[16px] leading-relaxed text-sub2">{s.stack[l]}</dd>
+          </div>
+        ))}
+      </dl>
     </section>
   );
 }
@@ -357,7 +366,6 @@ function Education({ l }: { l: Lang }) {
   const E = SECTIONS.education;
   const featured = CERTS.filter((c) => c.featured);
   const rest = CERTS.filter((c) => !c.featured);
-  const total = CERTS.length;
   const certRow = (c: (typeof CERTS)[number]) => (
     <li key={tx(c.name, "en")} className="flex items-baseline justify-between gap-6 border-t border-hair py-3.5">
       <span className="text-[15px] leading-snug">
@@ -394,7 +402,7 @@ function Education({ l }: { l: Lang }) {
             <details className="group border-t border-hair">
               <summary className="flex cursor-pointer items-center gap-2 py-3.5 text-[15px] font-medium text-link underline-offset-4 hover:underline">
                 <ChevronRight c="rotate-on-open size-3.5 transition-transform" />
-                {E.allCerts[l].replace("{n}", String(total))}
+                {E.moreCerts[l].replace("{n}", String(rest.length))}
               </summary>
               <ul>{rest.map(certRow)}</ul>
             </details>

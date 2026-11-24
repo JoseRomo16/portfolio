@@ -25,7 +25,7 @@ const fonts = Promise.all(
 );
 
 // Los mismos colores del tema claro del sitio (app/globals.css).
-const C = { page: "#f8f7f4", ink: "#15171a", sub: "#5c6066", sub2: "#3a3d42", accent: "#2257d6", hair: "rgba(21,23,26,0.12)" };
+const C = { page: "#f8f7f4", ink: "#15171a", sub: "#5c6066", sub2: "#3a3d42", accent: "#2257d6", mute: "#8e8f8c", hair: "rgba(21,23,26,0.12)" };
 
 const LABEL = { es: "Caso de estudio", en: "Case study" };
 const MONO = "JetBrains Mono, Inter";
@@ -41,7 +41,7 @@ export async function projectOgImage(p: Project, l: Lang) {
       <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: C.page, padding: "64px 72px", fontFamily: "Inter", color: C.ink }}>
         <div style={{ display: "flex", gap: 24, fontFamily: MONO, fontSize: 20, letterSpacing: "0.12em", textTransform: "uppercase", color: C.sub }}>
           <span>{LABEL[l]}</span>
-          <span style={{ color: C.hair }}>/</span>
+          <span style={{ color: C.mute }}>/</span>
           <span>{p.tag[l]}</span>
         </div>
         <div style={{ display: "flex", marginTop: 22, fontFamily: "Newsreader", fontSize: name.length > 24 ? 80 : 100, fontWeight: 500, letterSpacing: "-0.02em", lineHeight: 1 }}>

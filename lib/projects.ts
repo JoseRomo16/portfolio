@@ -875,7 +875,36 @@ export const CASE_UI = {
     counter: { es: "{i} de {n}", en: "{i} of {n}" },
     dialog: { es: "Visor de imágenes", en: "Image viewer" },
   },
-  talk: { es: "¿Te interesa cómo trabajo?", en: "Interested in how I work?" },
+  breadcrumb: { es: "Ruta", en: "Breadcrumb" },
+  /** Textos de los gráficos y diagramas de components/Visuals.tsx. */
+  charts: {
+    v1: { es: "V1, línea base", en: "V1, baseline" },
+    v2: { es: "V2, tras una iteración", en: "V2, after one iteration" },
+    passed: { es: "Casos de evaluación superados", en: "Evaluation cases passed" },
+    bnplVersionsNote: {
+      es: "V1 pasaba casi todos los checks sueltos y fallaba los que importan. Una respuesta puede ser fluida y ordenada y estar equivocada sobre el dinero de alguien.",
+      en: "V1 passed most individual checks while failing the ones that matter. An answer can be fluent and well organised and still be wrong about someone's money.",
+    },
+    byCategory: { es: "Casos superados por categoría, V1 y V2", en: "Cases passed by category, V1 and V2" },
+    category: { es: "Categoría", en: "Category" },
+    case: { es: "caso", en: "case" },
+    cases: { es: "casos", en: "cases" },
+    silhouette: {
+      es: "Barras del coeficiente de silueta para K de 2 a 10; el máximo, 0,55, está en K = 5.",
+      en: "Bars of the silhouette score for K from 2 to 10; the maximum, 0.55, is at K = 5.",
+    },
+    autovalorNote: {
+      es: "Todo corre en planes gratuitos: GitHub Actions para CI y Render para la API y el sitio.",
+      en: "Everything runs on free plans: GitHub Actions for CI and Render for the API and site.",
+    },
+    financeAssets: { es: "9 activos", en: "9 assets" },
+    financeMetrics: { es: "5 métricas, el mismo cálculo para todos", en: "5 metrics, the same calculation for all" },
+    notesNote: {
+      es: "En local, docker compose levanta las tres piezas con ./start.sh.",
+      en: "Locally, docker compose starts all three with ./start.sh.",
+    },
+  },
+  /** El título del contacto es el mismo del inicio ("Hablemos"); en los casos cambia solo el texto. */
   talkBody: {
     es: "Escríbeme y conversamos sobre tu equipo y tus datos.",
     en: "Write to me and let's talk about your team and your data.",

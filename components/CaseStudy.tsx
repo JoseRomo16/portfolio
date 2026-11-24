@@ -3,7 +3,7 @@ import { container } from "@/lib/ui";
 import { type Lang, projectPath, sectionPath, tx } from "@/lib/i18n";
 import { CASE_UI, PROJECTS, type Project, type Table } from "@/lib/projects";
 import { LangSuggest, SiteHeader } from "./Chrome";
-import { Contact, Footer, SkipLink, TextLink, btnPrimary, btnSecondary, label } from "./Home";
+import { Contact, Footer, SkipLink, TextLink, btnPrimary, btnSecondary, label, metricCell } from "./Home";
 import { ArrowUpRight, ChevronLeft, ChevronRight, GitHub } from "./Icons";
 import { umamiEvent } from "@/lib/analytics";
 import { CaseToc } from "./CaseToc";
@@ -91,7 +91,7 @@ export function CaseStudyPage({ p, l }: { p: Project; l: Lang }) {
         <article>
           {/* Encabezado */}
           <header className={`${container} pt-28 md:pt-36`}>
-            <nav aria-label={l === "es" ? "Ruta" : "Breadcrumb"}>
+            <nav aria-label={U.breadcrumb[l]}>
               <Link href={sectionPath(l, "projects")} className="inline-flex items-center gap-1 text-[14px] font-medium text-link hover:underline hover:underline-offset-4">
                 <ChevronLeft c="size-3.5" /> {U.back[l]}
               </Link>
@@ -150,12 +150,9 @@ export function CaseStudyPage({ p, l }: { p: Project; l: Lang }) {
           <div className={`${container} mt-12`}>
             <dl className={`grid border-y border-hair sm:grid-cols-2 ${p.metrics.length === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
               {p.metrics.map((m) => (
-                <div key={m.label.en} className="border-hair py-6 max-sm:border-b max-sm:last:border-b-0 sm:px-6 sm:[&:not(:first-child)]:border-l sm:max-lg:[&:nth-child(3)]:border-l-0 sm:max-lg:[&:nth-child(3)]:pl-0 sm:first:pl-0">
-                  <dt className="sr-only">{m.label[l]}</dt>
-                  <dd>
-                    <span className="block whitespace-nowrap font-mono text-[1.75rem] font-medium leading-none tracking-[-0.02em] text-accent md:text-[2.1rem]">{m.value[l]}</span>
-                    <span className="mt-3 block text-[14px] leading-snug text-sub2">{m.label[l]}</span>
-                  </dd>
+                <div key={m.label.en} className={`${metricCell} border-hair py-6 max-sm:border-b max-sm:last:border-b-0 sm:px-6 sm:[&:not(:first-child)]:border-l sm:max-lg:[&:nth-child(3)]:border-l-0 sm:max-lg:[&:nth-child(3)]:pl-0 sm:first:pl-0`}>
+                  <dt className="order-2 mt-3 text-[14px] leading-snug text-sub2">{m.label[l]}</dt>
+                  <dd className="order-1 whitespace-nowrap font-mono text-[1.75rem] font-medium leading-none tracking-[-0.02em] text-accent md:text-[2.1rem]">{m.value[l]}</dd>
                 </div>
               ))}
             </dl>
@@ -267,7 +264,7 @@ export function CaseStudyPage({ p, l }: { p: Project; l: Lang }) {
             </nav>
           </div>
         </article>
-        <Contact l={l} title={U.talk[l]} body={U.talkBody[l]} page="case-study" />
+        <Contact l={l} body={U.talkBody[l]} page="case-study" />
       </main>
       <Footer l={l} page="case-study" />
     </>

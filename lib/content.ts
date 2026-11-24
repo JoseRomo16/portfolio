@@ -100,7 +100,7 @@ export const STATS: { key: string; value: T; label: T; source: T }[] = [
   {
     key: "autovalor",
     value: { es: "10,0 %", en: "10.0%" },
-    label: { es: "de error en carros del modelo en producción", en: "error on cars for the model in production" },
+    label: { es: "de error medio fuera de muestra en carros (MAPE)", en: "mean out-of-sample error on cars (MAPE)" },
     source: { es: "AutoValor CO", en: "AutoValor CO" },
   },
   {
@@ -157,8 +157,8 @@ export const SECTIONS = {
     degrees: { es: "Títulos", en: "Degrees" },
     current: { es: "En curso", en: "In progress" },
     certsTitle: { es: "Certificaciones", en: "Certifications" },
-    /** {n} se reemplaza por el total de credenciales. */
-    allCerts: { es: "Ver todas las credenciales ({n})", en: "Show all credentials ({n})" },
+    /** {n} se reemplaza por el número de credenciales que quedan dentro del desplegable. */
+    moreCerts: { es: "Ver {n} credenciales más", en: "Show {n} more credentials" },
     english: { es: "Inglés", en: "English" },
     englishBody: { es: "EF SET 63/100, agosto de 2026", en: "EF SET 63/100, August 2026" },
     spanish: { es: "Español nativo", en: "Native Spanish" },
@@ -166,7 +166,7 @@ export const SECTIONS = {
   },
   contact: {
     label: { es: "Contacto", en: "Contact" },
-    title: { es: "Trabajemos juntos", en: "Let's work together" },
+    title: { es: "Hablemos", en: "Let's talk" },
     body: {
       es: "Busco roles remotos en IA aplicada, ciencia de datos, análisis de datos o desarrollo de software. Respondo en menos de 24 horas.",
       en: "I'm looking for remote roles in applied AI, data science, data analysis or software development. I reply within 24 hours.",
