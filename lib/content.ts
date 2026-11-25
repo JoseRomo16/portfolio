@@ -168,8 +168,8 @@ export const SECTIONS = {
     label: { es: "Contacto", en: "Contact" },
     title: { es: "Hablemos", en: "Let's talk" },
     body: {
-      es: "Busco roles remotos en IA aplicada, ciencia de datos, análisis de datos o desarrollo de software. Respondo en menos de 24 horas.",
-      en: "I'm looking for remote roles in applied AI, data science, data analysis or software development. I reply within 24 hours.",
+      es: "Busco remotos en IA aplicada, ciencia de datos, análisis de datos o desarrollo de software. Respondo en menos de 24 horas.",
+      en: "I'm looking for roles in applied AI, data science, data analysis or software development. I reply within 24 hours.",
     },
     write: { es: "Escribir un correo", en: "Write an email" },
     email: { es: "Correo", en: "Email" },
