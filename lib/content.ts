@@ -78,7 +78,7 @@ export const NOT_FOUND = {
 };
 
 export const HERO = {
-  status: { es: "Disponible para roles remotos", en: "Open to remote roles" },
+  status: { es: "Disponible para roles remotos, híbridos y/o presenciales", en: "Open to remote roles, hybrid and/or on-site roles" },
   /** Propuesta en una frase. Ingeniería de Software está en curso: no decir "ingeniero". */
   title: {
     es: "Economista y desarrollador de software. IA aplicada, machine learning y pipelines de datos en producción.",
@@ -220,14 +220,10 @@ export const EXPERIENCE: {
   {
     org: "Universidad de Nariño",
     meta: { es: "Facultad de Ciencias Económicas · Pasto", en: "School of Economics · Pasto" },
-    note: {
-      es: "Contrato temporal. Coincidió con GSE entre marzo y octubre de 2025.",
-      en: "Temporary contract. Overlapped with GSE from March to October 2025.",
-    },
     roles: [
       {
         title: { es: "Analista de Proyectos — Gestión de Datos", en: "Project Analyst — Data Management" },
-        period: { es: "May 2024 — Oct 2025", en: "May 2024 — Oct 2025" },
+        period: { es: "May 2023 — Oct 2024", en: "May 2023 — Oct 2024" },
         points: [
           { es: "Construí y mantuve bases de datos de estudiantes, docentes y cuentas de cobro, mejorando la precisión de la información para decisiones administrativas.", en: "Built and maintained student, faculty and billing databases, improving data accuracy for administrative decisions." },
           { es: "Apliqué análisis cuantitativo a la gestión administrativa de la facultad.", en: "Applied quantitative analysis to the school's administrative management." },
